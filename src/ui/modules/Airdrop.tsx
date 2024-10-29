@@ -16,6 +16,8 @@ const Airdrop = () => {
   const mockUserData = {
     claimable: true,
     amount: "9",
+    totalGames: 100,
+    claimedGames: 45,
     collections: [
       {
         name: "ZKube Collection",
@@ -78,6 +80,14 @@ const Airdrop = () => {
               </span>
             </div>
             <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-300">
+                  Claimed Games: {mockUserData.claimedGames} /{" "}
+                  {mockUserData.totalGames}
+                </span>
+              </div>
+            </div>
+            <div className="space-y-1">
               <span className="text-sm text-gray-400">Eligible for:</span>
               {mockUserData.collections.map((collection, index) => (
                 <div key={index} className="flex items-center gap-2">
@@ -90,7 +100,6 @@ const Airdrop = () => {
             </div>
           </div>
 
-          {/* Boutons d'action */}
           <div className="space-y-4">
             {!claimStatus.claimed ? (
               <Button
