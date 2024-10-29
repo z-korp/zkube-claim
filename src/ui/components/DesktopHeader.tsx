@@ -5,15 +5,18 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../elements/button";
 
 const DesktopHeader = () => {
-  const { address, status } = useAccount();
-  console.log("address", address);
-  console.log("status", status);
+  const { address, status, connector } = useAccount();
   const { disconnect } = useDisconnect();
   const navigate = useNavigate();
 
   const handleClick = useCallback(() => {
     navigate("", { replace: true });
   }, [navigate]);
+
+  const shortenAddress = (addr: string) => {
+    if (!addr) return "";
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  };
 
   return (
     <div className="flex justify-center items-center p-4 flex-wrap md:justify-between">
@@ -25,7 +28,12 @@ const DesktopHeader = () => {
           <Connect />
         ) : (
           <div className="flex gap-4 items-center">
-            <p>{address}</p>
+            <div className="flex gap-2 items-center">
+              <p>{shortenAddress(address || "")}</p>
+              <span className="text-sm text-gray-400">
+                ({connector?.id || "unknown"})
+              </span>
+            </div>
             <Button onClick={() => disconnect()}>Disconnect</Button>
           </div>
         )}

@@ -13,11 +13,9 @@ import { StatsPage } from "./ui/screens/Stats";
 
 const Layout: React.FC = () => {
   return (
-    <div className="min-h-screen">
+    <div className="h-screen-viewport flex flex-col w-full overflow-hidden">
       <Header />
-      <main className="container mx-auto px-4">
-        <Outlet />
-      </main>
+      <Outlet />
     </div>
   );
 };
