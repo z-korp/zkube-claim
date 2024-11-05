@@ -79,6 +79,7 @@ export function systems({ client }: { client: IWorld }) {
     message: string,
     transaction: GetTransactionReceiptResponse,
   ) => {
+    console.log("transaction", transaction);
     if (transaction.isError() || transaction.isRejected()) {
       toast.error(
         transaction.isRejected()
@@ -229,6 +230,25 @@ export function systems({ client }: { client: IWorld }) {
     );
   };
 
+  const setAdmin = async ({ account, ...props }: SystemTypes.SetAdmin) => {
+    await handleTransaction(
+      account,
+      () => client.settings.set_admin({ account, ...props }),
+      "Admin has been set.",
+    );
+  };
+
+  const deleteAdmin = async ({
+    account,
+    ...props
+  }: SystemTypes.DeleteAdmin) => {
+    await handleTransaction(
+      account,
+      () => client.settings.delete_admin({ account, ...props }),
+      "Admin has been deleted.",
+    );
+  };
+
   return {
     // account
     create,
@@ -242,5 +262,8 @@ export function systems({ client }: { client: IWorld }) {
     claimChest,
     // tournament
     claimTournament,
+    // settings
+    setAdmin,
+    deleteAdmin,
   };
 }

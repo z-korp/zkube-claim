@@ -1,7 +1,7 @@
 import { DojoProvider } from "@dojoengine/core";
 import { Config } from "../../dojo.config.ts";
 import { Account, UniversalDetails, cairo, shortString } from "starknet";
-import { Manifest } from '@/cartridgeConnector.tsx';
+import { Manifest } from "@/cartridgeConnector.tsx";
 
 const NAMESPACE = "zkube";
 
@@ -52,10 +52,6 @@ export interface ChestClaim extends Signer {
   chest_id: number;
 }
 
-export interface UpdateFreeDailyCredits extends Signer {
-  value: number;
-}
-
 export interface UpdateDailyModePrice extends Signer {
   value: bigint;
 }
@@ -65,7 +61,7 @@ export interface UpdateNormalModePrice extends Signer {
 }
 
 export interface SetAdmin extends Signer {
-  address: bigint;
+  address: string;
 }
 
 export interface DeleteAdmin extends Signer {
@@ -85,8 +81,9 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
 
   function account() {
     const contract_name = "account";
-    const contract = config.manifest.contracts.find((contract: Manifest['contracts'][number]) =>
-      contract.tag.includes(contract_name),
+    const contract = config.manifest.contracts.find(
+      (contract: Manifest["contracts"][number]) =>
+        contract.tag.includes(contract_name),
     );
     if (!contract) {
       throw new Error(`Contract ${contract_name} not found in manifest`);
@@ -140,8 +137,8 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
 
   function play() {
     const contract_name = "play";
-    const contract = config.manifest.contracts.find((c: Manifest['contracts'][number]) =>
-      c.tag.includes(contract_name),
+    const contract = config.manifest.contracts.find(
+      (c: Manifest["contracts"][number]) => c.tag.includes(contract_name),
     );
     if (!contract) {
       throw new Error(`Contract ${contract_name} not found in manifest`);
@@ -160,8 +157,9 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
       beta,
     }: Start) => {
       const contract_name_chest = "chest";
-      const contract_chest = config.manifest.contracts.find((c: Manifest['contracts'][number]) =>
-        c.tag.includes(contract_name_chest),
+      const contract_chest = config.manifest.contracts.find(
+        (c: Manifest["contracts"][number]) =>
+          c.tag.includes(contract_name_chest),
       );
       if (!contract_chest) {
         throw new Error(
@@ -169,8 +167,9 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
         );
       }
       const contract_name_tournament = "tournament";
-      const contract_tournament = config.manifest.contracts.find((c: Manifest['contracts'][number]) =>
-        c.tag.includes(contract_name_tournament),
+      const contract_tournament = config.manifest.contracts.find(
+        (c: Manifest["contracts"][number]) =>
+          c.tag.includes(contract_name_tournament),
       );
       if (!contract_tournament) {
         throw new Error(
@@ -179,8 +178,9 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
       }
 
       const contract_name_zkorp = "zkorp";
-      const contract_zkorp = config.manifest.contracts.find((c: Manifest['contracts'][number]) =>
-        c.tag.includes(contract_name_zkorp),
+      const contract_zkorp = config.manifest.contracts.find(
+        (c: Manifest["contracts"][number]) =>
+          c.tag.includes(contract_name_zkorp),
       );
       if (!contract_zkorp) {
         throw new Error(
@@ -307,8 +307,8 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
 
   function chest() {
     const contract_name = "chest";
-    const contract = config.manifest.contracts.find((c: Manifest['contracts'][number]) =>
-      c.tag.includes(contract_name),
+    const contract = config.manifest.contracts.find(
+      (c: Manifest["contracts"][number]) => c.tag.includes(contract_name),
     );
     if (!contract) {
       throw new Error(`Contract ${contract_name} not found in manifest`);
@@ -359,33 +359,12 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
 
   function settings() {
     const contract_name = "settings";
-    const contract = config.manifest.contracts.find((c: Manifest['contracts'][number]) =>
-      c.tag.includes(contract_name),
+    const contract = config.manifest.contracts.find(
+      (c: Manifest["contracts"][number]) => c.tag.includes(contract_name),
     );
     if (!contract) {
       throw new Error(`Contract ${contract_name} not found in manifest`);
     }
-
-    const update_free_daily_credits = async ({
-      account,
-      value,
-    }: UpdateFreeDailyCredits) => {
-      try {
-        return await provider.execute(
-          account,
-          {
-            contractName: contract_name,
-            entrypoint: "update_free_daily_credits",
-            calldata: [value],
-          },
-          NAMESPACE,
-          details,
-        );
-      } catch (error) {
-        console.error("Error executing update_free_daily_credits:", error);
-        throw error;
-      }
-    };
 
     const update_daily_mode_price = async ({
       account,
@@ -430,6 +409,7 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
     };
 
     const set_admin = async ({ account, address }: SetAdmin) => {
+      console.log("account", account);
       try {
         return await provider.execute(
           account,
@@ -467,7 +447,6 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
 
     return {
       address: contract.address,
-      update_free_daily_credits,
       update_daily_mode_price,
       update_normal_mode_price,
       set_admin,
@@ -477,8 +456,8 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
 
   function tournament() {
     const contract_name = "tournament";
-    const contract = config.manifest.contracts.find((c: Manifest['contracts'][number]) =>
-      c.tag.includes(contract_name),
+    const contract = config.manifest.contracts.find(
+      (c: Manifest["contracts"][number]) => c.tag.includes(contract_name),
     );
     if (!contract) {
       throw new Error(`Contract ${contract_name} not found in manifest`);

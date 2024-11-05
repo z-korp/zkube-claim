@@ -1,37 +1,28 @@
 import { useState } from "react";
-import ImageAssets from "../theme/ImageAssets";
-import { useTheme } from "@/ui/elements/theme-provider/hooks";
 import { Input } from "../elements/input";
 import { Button } from "@/ui/elements/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../elements/card";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../elements/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../elements/table";
+import { useAdmins } from "@/hooks/useAdmins";
+import { AddAdmin } from "../actions/AddAdmin";
 
 export const AdminPage = () => {
-  const { themeTemplate } = useTheme();
-  const imgAssets = ImageAssets(themeTemplate);
-
   const [zkorpAddress, setZkorpAddress] = useState("");
-  const [dailyCredits, setDailyCredits] = useState(0);
   const [dailyModePrice, setDailyModePrice] = useState(0);
   const [normalModePrice, setNormalModePrice] = useState(0);
   const [adminAddress, setAdminAddress] = useState("");
-  const [controllerAddress, setControllerAddress] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  const mockAdminAddresses = [
-    "0x123456789ABCDEF123456789ABCDEF123456789A",
-    "0x123456789ABCDEF123456789ABCDEF123456789B",
-    "0x123456789ABCDEF123456789ABCDEF123456789C",
-    "0x123456789ABCDEF123456789ABCDEF123456789D",
-    "0x123456789ABCDEF123456789ABCDEF123456789E",
-  ];
+  const admins = useAdmins();
 
   const handleUpdateZkorpAddress = () => {
     // Call the function to update the zkorp address
-  };
-
-  const handleUpdateDailyCredits = () => {
-    // Call the function to update daily credits
   };
 
   const handleUpdateDailyModePrice = () => {
@@ -40,14 +31,6 @@ export const AdminPage = () => {
 
   const handleUpdateNormalModePrice = () => {
     // Call the function to update the normal mode price
-  };
-
-  const handleSetAdmin = () => {
-    // Call the function to set a new admin
-  };
-
-  const handleDeleteAdmin = () => {
-    // Call the function to delete an admin
   };
 
   return (
@@ -86,37 +69,6 @@ export const AdminPage = () => {
                   className="hover:bg-blue-500"
                 >
                   Update zkorp address
-                </Button>
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center">
-                <Input
-                  type="text"
-                  value={dailyCredits}
-                  onChange={(e) => setDailyCredits(Number(e.target.value))}
-                  placeholder="Daily credits"
-                  className="bg-gray-800/50 border-gray-700"
-                />
-                <Button
-                  onClick={() =>
-                    navigator.clipboard.writeText(dailyCredits.toString())
-                  }
-                  className="ml-2 hover:bg-blue-500"
-                >
-                  <img
-                    src="/assets/svgs/copy.svg"
-                    alt="Copy"
-                    className="w-4 h-4"
-                  />
-                </Button>
-              </div>
-              <div className="mt-4">
-                <Button
-                  onClick={handleUpdateDailyCredits}
-                  className="hover:bg-blue-500"
-                >
-                  Update daily credits
                 </Button>
               </div>
             </div>
@@ -184,7 +136,6 @@ export const AdminPage = () => {
               <div>
                 <div className="flex items-center">
                   <Table>
-                    <TableCaption>list of Admins</TableCaption>
                     <TableHeader>
                       <TableRow>
                         <TableHead>ID</TableHead>
@@ -193,15 +144,15 @@ export const AdminPage = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {mockAdminAddresses.map((address, index) => (
+                      {admins.map((admin, index) => (
                         <TableRow key={index}>
-                          <TableCell className="font-medium">
-                            {address}
+                          <TableCell className="font-medium text-xs">
+                            {admin.address}
                           </TableCell>
                           <TableCell>
                             <Button
                               onClick={() =>
-                                navigator.clipboard.writeText(address)
+                                navigator.clipboard.writeText(admin.address)
                               }
                               className="ml-2 hover:bg-blue-500"
                             >
@@ -215,7 +166,7 @@ export const AdminPage = () => {
                           <TableCell>
                             <Button
                               onClick={() =>
-                                navigator.clipboard.writeText(address)
+                                navigator.clipboard.writeText(admin.address)
                               }
                               className="ml-2 hover:bg-red-500"
                             >
@@ -236,12 +187,7 @@ export const AdminPage = () => {
                         </TableCell>
                         <TableCell />
                         <TableCell>
-                          <Button
-                            onClick={handleSetAdmin}
-                            className="ml-2 hover:bg-green-500"
-                          >
-                            Add
-                          </Button>
+                          <AddAdmin address={adminAddress} />
                         </TableCell>
                       </TableRow>
                     </TableBody>
