@@ -34,10 +34,17 @@ const tournament_contract_address = getContractByName(
   "tournament",
 )?.address;
 
+const settings_contract_address = getContractByName(
+  manifest,
+  "zkube",
+  "settings",
+)?.address;
+
 console.log("account_contract_address", account_contract_address);
 console.log("play_contract_address", play_contract_address);
 console.log("chest_contract_address", chest_contract_address);
 console.log("tournament_contract_address", tournament_contract_address);
+console.log("settings_contract_address", settings_contract_address);
 
 const policies = [
   {

@@ -1,8 +1,9 @@
 import { ContractComponents } from "./contractModels";
+import { Mint } from "./game/models/mint";
 import { Game } from "./game/models/game";
 import { Chest } from "./game/models/chest";
+import { Admin } from "./game/models/admin";
 import { Player } from "./game/models/player";
-import { Credits } from "./game/models/credits";
 import { Settings } from "./game/models/settings";
 import { Tournament } from "./game/models/tournament";
 import { Participation } from "./game/models/participation";
@@ -19,13 +20,14 @@ export function models({
       ...contractComponents,
     },
     classes: {
+      Mint,
       Game,
       Chest,
       Player,
-      Credits,
       Settings,
       Tournament,
       Participation,
+      Admin,
     },
   };
 }
