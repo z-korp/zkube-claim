@@ -30,6 +30,7 @@ target
 .vercel
 
 client/dev-dist/
+script/venv/
 
 *.db
 output_file
