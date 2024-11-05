@@ -43,6 +43,10 @@ export const AdminPage = () => {
         const text = e.target?.result as string;
         const rows = text.split("\n").map((row) => row.split(","));
         const headers = rows[0];
+        headers.push("tenDaysFromNow");
+
+        // Log column names
+        console.log("CSV Column Names:", headers);
 
         // Add timestamp 10 days from now to each row
         const tenDaysFromNow =
@@ -50,7 +54,7 @@ export const AdminPage = () => {
         const processedRows = rows
           .slice(1)
           .map((row) => [...row, tenDaysFromNow.toString()]);
-
+        console.log(processedRows);
         setCsvContent(processedRows);
         setHeaders(headers);
       };
@@ -71,6 +75,14 @@ export const AdminPage = () => {
     const date = new Date(timestampNum * 1000);
     return date.toLocaleString();
   };
+
+  // Get the index of tenDaysFromNow column
+  const timestampIndex = headers.indexOf("tenDaysFromNow");
+
+  // Filter visible headers (excluding tenDaysFromNow)
+  const visibleHeaders = headers.filter(
+    (header) => header !== "tenDaysFromNow",
+  );
 
   return (
     <div className="flex gap-4 w-full max-w-6xl mx-auto overflow-y-auto h-full">
@@ -261,7 +273,7 @@ export const AdminPage = () => {
                     Detected Columns:
                   </h3>
                   <ul className="list-disc list-inside">
-                    {headers.map((header, index) => (
+                    {visibleHeaders.map((header, index) => (
                       <li key={index} className="text-gray-300">
                         {header}
                       </li>
@@ -274,28 +286,28 @@ export const AdminPage = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        {headers.map((header, index) => (
+                        {visibleHeaders.map((header, index) => (
                           <TableHead key={index}>{header}</TableHead>
                         ))}
-                        <TableHead className="hidden">Raw Timestamp</TableHead>
                         <TableHead>Formatted Date</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {csvContent.slice(0, 5).map((row, rowIndex) => (
                         <TableRow key={rowIndex}>
-                          {row.map((cell, cellIndex) => (
-                            <TableCell key={cellIndex}>
-                              {headers[cellIndex] === "address"
-                                ? formatAddress(cell)
-                                : cell}
-                            </TableCell>
-                          ))}
-                          <TableCell className="hidden">
-                            {row[row.length - 1]}
-                          </TableCell>
+                          {row.map((cell, cellIndex) => {
+                            // Skip rendering the tenDaysFromNow cell
+                            if (cellIndex === timestampIndex) return null;
+                            return (
+                              <TableCell key={cellIndex}>
+                                {headers[cellIndex] === "address"
+                                  ? formatAddress(cell)
+                                  : cell}
+                              </TableCell>
+                            );
+                          })}
                           <TableCell>
-                            {formatTimestamp(row[row.length - 1])}
+                            {formatTimestamp(row[timestampIndex])}
                           </TableCell>
                         </TableRow>
                       ))}
