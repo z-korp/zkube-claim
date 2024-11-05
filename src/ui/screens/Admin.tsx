@@ -18,7 +18,7 @@ export const AdminPage = () => {
   const [dailyModePrice, setDailyModePrice] = useState(0);
   const [normalModePrice, setNormalModePrice] = useState(0);
   const [adminAddress, setAdminAddress] = useState("");
-  const [csvContent, setCsvContent] = useState<string[][]>([]);
+  const [csvContent, setCsvContent] = useState<Array<Array<string>>>([]);
   const [headers, setHeaders] = useState<string[]>([]);
 
   const admins = useAdmins();
@@ -43,11 +43,33 @@ export const AdminPage = () => {
         const text = e.target?.result as string;
         const rows = text.split("\n").map((row) => row.split(","));
         const headers = rows[0];
-        setCsvContent(rows.slice(1));
+
+        // Add timestamp 10 days from now to each row
+        const tenDaysFromNow =
+          Math.floor(Date.now() / 1000) + 10 * 24 * 60 * 60;
+        const processedRows = rows
+          .slice(1)
+          .map((row) => [...row, tenDaysFromNow.toString()]);
+
+        setCsvContent(processedRows);
         setHeaders(headers);
       };
       reader.readAsText(file);
     }
+  };
+
+  const formatAddress = (address: string) => {
+    if (address.length < 10) return address;
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
+
+  const formatTimestamp = (timestamp: string) => {
+    const timestampNum = parseInt(timestamp);
+    if (isNaN(timestampNum)) {
+      return "Invalid date";
+    }
+    const date = new Date(timestampNum * 1000);
+    return date.toLocaleString();
   };
 
   return (
@@ -165,7 +187,7 @@ export const AdminPage = () => {
                         {admins.map((admin, index) => (
                           <TableRow key={index}>
                             <TableCell className="font-medium text-xs">
-                              {admin.address}
+                              {formatAddress(admin.address)}
                             </TableCell>
                             <TableCell>
                               <Button
@@ -218,7 +240,7 @@ export const AdminPage = () => {
         </Card>
       </div>
 
-      <div className="w-96">
+      <div className="w-[40rem]">
         <Card className="bg-gray-900 h-full">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-white text-center">
@@ -255,14 +277,26 @@ export const AdminPage = () => {
                         {headers.map((header, index) => (
                           <TableHead key={index}>{header}</TableHead>
                         ))}
+                        <TableHead className="hidden">Raw Timestamp</TableHead>
+                        <TableHead>Formatted Date</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {csvContent.slice(0, 5).map((row, rowIndex) => (
                         <TableRow key={rowIndex}>
                           {row.map((cell, cellIndex) => (
-                            <TableCell key={cellIndex}>{cell}</TableCell>
+                            <TableCell key={cellIndex}>
+                              {headers[cellIndex] === "address"
+                                ? formatAddress(cell)
+                                : cell}
+                            </TableCell>
                           ))}
+                          <TableCell className="hidden">
+                            {row[row.length - 1]}
+                          </TableCell>
+                          <TableCell>
+                            {formatTimestamp(row[row.length - 1])}
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

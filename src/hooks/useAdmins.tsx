@@ -33,7 +33,5 @@ export const useAdmins = () => {
     );
   }, [adminKeys]);
 
-  console.log("admins", admins);
-
   return admins;
 };
