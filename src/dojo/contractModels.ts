@@ -148,6 +148,24 @@ export function defineContractComponents(world: World) {
         },
       },
     ),
+    Mint: (() => {
+      return defineComponent(
+        world,
+        {
+          id: RecsType.BigInt,
+          is_set: RecsType.Boolean,
+          amount: RecsType.Number,
+        },
+        {
+          metadata: {
+            namespace: "zkube",
+            name: "Mint",
+            types: ["felt252", "bool", "u64"],
+            customTypes: [],
+          },
+        },
+      );
+    })(),
     Chest: defineComponent(
       world,
       {

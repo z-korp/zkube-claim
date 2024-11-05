@@ -74,6 +74,12 @@ export interface TournamentClaim extends Signer {
   rank: number;
 }
 
+export interface AddFreeMint extends Signer {
+  to: bigint;
+  amount: number;
+  expiration_timestamp: number;
+}
+
 export type IWorld = Awaited<ReturnType<typeof setupWorld>>;
 
 export async function setupWorld(provider: DojoProvider, config: Config) {
@@ -492,11 +498,69 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
     };
   }
 
+  function minter() {
+    const contract_name = "minter";
+    const contract = config.manifest.contracts.find(
+      (c: Manifest["contracts"][number]) => c.tag.includes(contract_name),
+    );
+    if (!contract) {
+      throw new Error(`Contract ${contract_name} not found in manifest`);
+    }
+
+    const add_free_mint = async ({
+      account,
+      to,
+      amount,
+      expiration_timestamp,
+    }: AddFreeMint) => {
+      try {
+        return await provider.execute(
+          account,
+          {
+            contractName: contract_name,
+            entrypoint: "add_free_mint",
+            calldata: [to, amount, expiration_timestamp],
+          },
+          NAMESPACE,
+          details,
+        );
+      } catch (error) {
+        console.error("Error executing claim:", error);
+        throw error;
+      }
+    };
+
+    const claim_free_mint = async ({ account }: Signer) => {
+      try {
+        return await provider.execute(
+          account,
+          {
+            contractName: contract_name,
+            entrypoint: "claim_free_mint",
+            calldata: [],
+          },
+          NAMESPACE,
+          details,
+        );
+      } catch (error) {
+        console.error("Error executing claim:", error);
+        throw error;
+      }
+    };
+
+    return {
+      address: contract.address,
+      add_free_mint,
+      claim_free_mint,
+    };
+  }
+
   return {
     account: account(),
     play: play(),
     chest: chest(),
     tournament: tournament(),
     settings: settings(),
+    minter: minter(),
   };
 }
