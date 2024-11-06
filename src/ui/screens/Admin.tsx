@@ -12,16 +12,117 @@ import {
 } from "../elements/table";
 import { useAdmins } from "@/hooks/useAdmins";
 import { AddAdmin } from "../actions/AddAdmin";
+import { useDojo } from "@/dojo/useDojo";
+import useAccountCustom from "@/hooks/useAccountCustom";
 
 export const AdminPage = () => {
+  const {
+    setup: {
+      systemCalls: { addFreeMintBatch, addFreeMint },
+    },
+  } = useDojo();
   const [zkorpAddress, setZkorpAddress] = useState("");
   const [dailyModePrice, setDailyModePrice] = useState(0);
   const [normalModePrice, setNormalModePrice] = useState(0);
   const [adminAddress, setAdminAddress] = useState("");
   const [csvContent, setCsvContent] = useState<Array<Array<string>>>([]);
   const [headers, setHeaders] = useState<string[]>([]);
-
+  const [isLoading, setIsLoading] = useState(false);
+  const { account } = useAccountCustom();
   const admins = useAdmins();
+
+  const handleAddFreeMintBatch = async () => {
+    if (csvContent.length === 0) {
+      console.log("No addresses loaded from CSV");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      //TODO ENLEVER SLICE
+      const addresses = csvContent.slice(0, 3).map((row) => {
+        const addressIndex = headers.indexOf("address");
+        const timestampIndex = headers.indexOf("tenDaysFromNow");
+        return {
+          address: row[addressIndex],
+          timestamp: parseInt(row[timestampIndex]),
+        };
+      });
+
+      console.log("Processing free mints for addresses:", addresses);
+
+      console.log("addresses", addresses);
+      if (!account) return;
+
+      try {
+        await addFreeMintBatch({
+          account: account,
+          freeMints: addresses.map(({ address, timestamp }) => ({
+            to: address,
+            amount: 10,
+            expiration_timestamp: timestamp,
+          })),
+        });
+
+        console.log("Successfully added free mints for:", addresses);
+      } catch (error) {
+        console.error(
+          "Error adding free mints for address",
+          addresses,
+          ":",
+          error,
+        );
+      }
+      // }
+    } catch (error) {
+      console.error("Error in handleAddFreeMint:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddFreeMint = async () => {
+    if (csvContent.length === 0) {
+      console.log("No addresses loaded from CSV");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Get first 5 addresses from CSV
+      const addresses = csvContent.map((row) => {
+        const addressIndex = headers.indexOf("address");
+        const timestampIndex = headers.indexOf("tenDaysFromNow");
+        return {
+          address: row[addressIndex],
+          timestamp: parseInt(row[timestampIndex]),
+        };
+      });
+      if (!account) return;
+
+      try {
+        await addFreeMint({
+          to: addresses[0].address,
+          amount: 10,
+          expiration_timestamp: addresses[0].timestamp,
+          account: account,
+        });
+        console.log("Successfully added free mints for:", addresses);
+      } catch (error) {
+        console.error(
+          "Error adding free mints for address",
+          addresses,
+          ":",
+          error,
+        );
+      }
+      // }
+    } catch (error) {
+      console.error("Error in handleAddFreeMint:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleUpdateZkorpAddress = () => {
     // Call the function to update the zkorp address
@@ -54,7 +155,6 @@ export const AdminPage = () => {
         const processedRows = rows
           .slice(1)
           .map((row) => [...row, tenDaysFromNow.toString()]);
-        console.log(processedRows);
         setCsvContent(processedRows);
         setHeaders(headers);
       };
@@ -282,43 +382,59 @@ export const AdminPage = () => {
                 </div>
               )}
               {csvContent.length > 0 && (
-                <div className="bg-gray-800 p-4 rounded-lg overflow-auto max-h-96">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        {visibleHeaders.map((header, index) => (
-                          <TableHead key={index}>{header}</TableHead>
-                        ))}
-                        <TableHead>Formatted Date</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {csvContent.slice(0, 5).map((row, rowIndex) => (
-                        <TableRow key={rowIndex}>
-                          {row.map((cell, cellIndex) => {
-                            // Skip rendering the tenDaysFromNow cell
-                            if (cellIndex === timestampIndex) return null;
-                            return (
-                              <TableCell key={cellIndex}>
-                                {headers[cellIndex] === "address"
-                                  ? formatAddress(cell)
-                                  : cell}
-                              </TableCell>
-                            );
-                          })}
-                          <TableCell>
-                            {formatTimestamp(row[timestampIndex])}
-                          </TableCell>
+                <>
+                  <Button
+                    onClick={handleAddFreeMint}
+                    disabled={isLoading}
+                    className="w-full bg-blue-600 hover:bg-blue-700 mb-4"
+                  >
+                    {isLoading ? "Processing..." : "Simple"}
+                  </Button>
+                  <Button
+                    onClick={handleAddFreeMintBatch}
+                    disabled={isLoading}
+                    className="w-full bg-blue-600 hover:bg-blue-700 mb-4"
+                  >
+                    {isLoading ? "Processing..." : "Batch"}
+                  </Button>
+                  <div className="bg-gray-800 p-4 rounded-lg overflow-auto max-h-96">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          {visibleHeaders.map((header, index) => (
+                            <TableHead key={index}>{header}</TableHead>
+                          ))}
+                          <TableHead>Formatted Date</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                  {csvContent.length > 5 && (
-                    <div className="text-gray-400 text-center mt-4">
-                      Showing first 5 rows of {csvContent.length} total rows
-                    </div>
-                  )}
-                </div>
+                      </TableHeader>
+                      <TableBody>
+                        {csvContent.slice(0, 5).map((row, rowIndex) => (
+                          <TableRow key={rowIndex}>
+                            {row.map((cell, cellIndex) => {
+                              // Skip rendering the tenDaysFromNow cell
+                              if (cellIndex === timestampIndex) return null;
+                              return (
+                                <TableCell key={cellIndex}>
+                                  {headers[cellIndex] === "address"
+                                    ? formatAddress(cell)
+                                    : cell}
+                                </TableCell>
+                              );
+                            })}
+                            <TableCell>
+                              {formatTimestamp(row[timestampIndex])}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                    {csvContent.length > 5 && (
+                      <div className="text-gray-400 text-center mt-4">
+                        Showing first 5 rows of {csvContent.length} total rows
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           </CardContent>

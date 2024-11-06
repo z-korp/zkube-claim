@@ -75,9 +75,19 @@ export interface TournamentClaim extends Signer {
 }
 
 export interface AddFreeMint extends Signer {
-  to: bigint;
+  to: string;
   amount: number;
   expiration_timestamp: number;
+}
+
+export interface AddFreeMintSimple {
+  to: string;
+  amount: number;
+  expiration_timestamp: number;
+}
+
+export interface AddFreeMintBatch extends Signer {
+  freeMints: AddFreeMintSimple[];
 }
 
 export type IWorld = Awaited<ReturnType<typeof setupWorld>>;
@@ -452,7 +462,7 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
     };
 
     return {
-      address: contract.address,
+      address: contract?.address,
       update_daily_mode_price,
       update_normal_mode_price,
       set_admin,
@@ -548,9 +558,40 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
       }
     };
 
+    const add_free_mint_batch = async ({
+      account,
+      freeMints,
+    }: {
+      account: Account;
+      freeMints: AddFreeMintSimple[];
+    }) => {
+      try {
+        return await provider.execute(
+          account,
+          [
+            ...freeMints.map((freeMint) => ({
+              contractName: contract_name,
+              entrypoint: "add_free_mint",
+              calldata: [
+                freeMint.to,
+                freeMint.amount,
+                freeMint.expiration_timestamp,
+              ],
+            })),
+          ],
+          NAMESPACE,
+          details,
+        );
+      } catch (error) {
+        console.error("Error executing add_free_mint:", error);
+        throw error;
+      }
+    };
+
     return {
       address: contract.address,
       add_free_mint,
+      add_free_mint_batch,
       claim_free_mint,
     };
   }

@@ -2,57 +2,50 @@ import React, { useCallback, useState } from "react";
 import { AlertCircle, Check, Wallet } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../elements/card";
 import { Button } from "../elements/button";
-import useAccountCustom from "@/hooks/useAccountCustom";
 import { Input } from "../elements/input";
+import { useFreeMint } from "@/hooks/useFreeMint";
+import { useDojo } from "@/dojo/useDojo";
+import { Account } from "starknet";
+import { useAccount } from "@starknet-react/core";
 
 const Airdrop = () => {
-  const { account } = useAccountCustom();
+  const {
+    setup: {
+      systemCalls: { claimFreeMint },
+    },
+  } = useDojo();
+
+  const { account } = useAccount();
+  const freeGames = useFreeMint({ player_id: account?.address });
   const [controllerAddress, setControllerAddress] = useState("");
-  const [claimStatus, setClaimStatus] = useState({
-    claimed: false,
-    amountClaimed: "0",
-    transferredToController: false,
-  });
+  // const [claimStatus, setClaimStatus] = useState({
+  //   claimed: false,
+  //   amountClaimed: "0",
+  //   transferredToController: false,
+  // });
   const [isLoading, setIsLoading] = useState(false);
 
-  const mockUserData = {
-    claimable: true,
-    amount: "9",
-    totalGames: 100,
-    claimedGames: 45,
-    collections: [
-      {
-        name: "ZKube Collection",
-        amount: 5,
-      },
-      {
-        name: "Flippy Collection",
-        amount: 3,
-      },
-      {
-        name: "Early Adopter Collection",
-        amount: 1,
-      },
-    ],
-  };
-
   const handleClaim = useCallback(async () => {
+    console.log("Starting claim process...");
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setClaimStatus((prev) => ({
-        ...prev,
-        claimed: true,
-        amountClaimed: mockUserData.amount,
-      }));
+      console.log("account", account);
+      if (account) {
+        console.log("Account found, attempting to claim free mint...");
+        await claimFreeMint({ account: account as Account });
+        console.log("Successfully claimed free mint");
+      } else {
+        console.log("No account found");
+      }
     } catch (error) {
       console.error("Error claiming:", error);
     } finally {
+      console.log("Claim process completed");
       setIsLoading(false);
     }
-  }, []);
-
-  if (!mockUserData.claimable) {
+  }, [account]);
+  console.log("account", account);
+  if (!freeGames) {
     return (
       <Card className="w-full max-w-2xl mx-auto bg-gray-900">
         <CardContent className="text-center p-6">
@@ -78,18 +71,18 @@ const Airdrop = () => {
             <div className="flex justify-between items-center">
               <span className="text-gray-300">Claimable Amount</span>
               <span className="text-white font-bold">
-                {mockUserData.amount} ZKUBE
+                {freeGames?.number} Games
               </span>
             </div>
             <div className="space-y-1">
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-300">
                   Claimed Games: {mockUserData.claimedGames} /{" "}
                   {mockUserData.totalGames}
                 </span>
-              </div>
+              </div> */}
             </div>
-            <div className="space-y-1">
+            {/* <div className="space-y-1">
               <span className="text-sm text-gray-400">Eligible for:</span>
               {mockUserData.collections.map((collection, index) => (
                 <div key={index} className="flex items-center gap-2">
@@ -99,7 +92,7 @@ const Airdrop = () => {
                   </span>
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
           <div className="mb-2">
             <Input
@@ -111,7 +104,7 @@ const Airdrop = () => {
           </div>
           <Button
             className="w-full bg-green-600 hover:bg-green-700"
-            onClick={console.log("tx")}
+            onClick={handleClaim}
             disabled={isLoading || !controllerAddress}
           >
             Transfer to Controller

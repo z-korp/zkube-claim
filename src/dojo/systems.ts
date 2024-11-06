@@ -228,6 +228,37 @@ export function systems({ client }: { client: IWorld }) {
     );
   };
 
+  const addFreeMint = async ({
+    account,
+    ...props
+  }: SystemTypes.AddFreeMint) => {
+    await handleTransaction(
+      account,
+      () => client.minter.add_free_mint({ account, ...props }),
+      "Games have been put.",
+    );
+  };
+
+  const addFreeMintBatch = async ({
+    account,
+    ...props
+  }: SystemTypes.AddFreeMintBatch) => {
+    console.log("props", props);
+    await handleTransaction(
+      account,
+      () => client.minter.add_free_mint_batch({ account, ...props }),
+      "Games have been put.",
+    );
+  };
+
+  const claimFreeMint = async ({ account, ...props }: SystemTypes.Signer) => {
+    await handleTransaction(
+      account,
+      () => client.minter.claim_free_mint({ account, ...props }),
+      "Games have been claimed.",
+    );
+  };
+
   return {
     // account
     create,
@@ -244,5 +275,9 @@ export function systems({ client }: { client: IWorld }) {
     // settings
     setAdmin,
     deleteAdmin,
+    // mint games
+    addFreeMint,
+    addFreeMintBatch,
+    claimFreeMint,
   };
 }
