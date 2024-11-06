@@ -26,7 +26,6 @@ interface StartProps {
 
 export const Start: React.FC<StartProps> = ({ mode, handleGameMode }) => {
   const {
-    master,
     setup: {
       systemCalls: { start },
     },
@@ -48,14 +47,8 @@ export const Start: React.FC<StartProps> = ({ mode, handleGameMode }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const disabled = useMemo(() => {
-    return (
-      !account ||
-      !master ||
-      account === master ||
-      !player ||
-      (!!game && !game.isOver())
-    );
-  }, [account, master, player, game]);
+    return !account || !player || (!!game && !game.isOver());
+  }, [account, player, game]);
 
   const handleClick = useCallback(async () => {
     console.log(

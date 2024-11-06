@@ -8,7 +8,6 @@ export const AddAdmin = ({ address }: { address: string }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { account } = useAccount();
   const {
-    master,
     setup: {
       systemCalls: { setAdmin },
     },
@@ -24,8 +23,8 @@ export const AddAdmin = ({ address }: { address: string }) => {
   }, [account, address, setAdmin]);
 
   const disabled = useMemo(() => {
-    return !account || !master || account === master;
-  }, [account, master]);
+    return !account;
+  }, [account]);
 
   if (disabled) return null;
 
