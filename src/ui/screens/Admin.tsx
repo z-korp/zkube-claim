@@ -31,6 +31,35 @@ export const AdminPage = () => {
   const { account } = useAccountCustom();
   const admins = useAdmins();
 
+  interface FailedAddress {
+    address: string;
+    amount: number;
+    timestamp: number;
+  }
+
+  // Fonction utilitaire pour créer un CSV
+  const createCsvFailContent = (failedAddresses: FailedAddress[]) => {
+    const headers = ["address", "amount", "timestamp", "error_timestamp"];
+    const rows = failedAddresses.map((item) => [
+      item.address,
+      item.amount,
+      item.timestamp,
+      new Date().toISOString(),
+    ]);
+
+    return [headers, ...rows].map((row) => row.join(",")).join("\n");
+  };
+
+  const saveCsvToFile = (content: string, filename: string) => {
+    const blob = new Blob([content], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   const handleAddFreeMintBatch = async () => {
     if (csvContent.length === 0) {
       console.log("No addresses loaded from CSV");
@@ -38,13 +67,17 @@ export const AdminPage = () => {
     }
 
     setIsLoading(true);
+    const BATCH_SIZE = 100; // Batch size
+    const failedAddresses = []; // Store failed addresses
+    const successAddresses = []; // Store successful addresses
+
     try {
-      const addresses = csvContent.slice(0, 3).map((row) => {
+      // Prepare all addresses
+      const allAddresses = csvContent.map((row) => {
         const addressIndex = headers.indexOf("address");
         const timestampIndex = headers.indexOf("tenDaysFromNow");
         const numberIndex = headers.indexOf("number");
 
-        // Get the number from CSV or default to 10 if not found
         const amount = numberIndex !== -1 ? parseInt(row[numberIndex]) : 10;
 
         return {
@@ -54,31 +87,79 @@ export const AdminPage = () => {
         };
       });
 
-      console.log("Processing free mints for addresses:", addresses);
-
-      if (!account) return;
-
-      try {
-        await addFreeMintBatch({
-          account: account,
-          freeMints: addresses.map(({ address, timestamp, amount }) => ({
-            to: address,
-            amount: amount, // Use the amount from CSV
-            expiration_timestamp: timestamp,
-          })),
-        });
-
-        console.log("Successfully added free mints for:", addresses);
-      } catch (error) {
-        console.error(
-          "Error adding free mints for addresses:",
-          addresses,
-          ":",
-          error,
+      // Process in batches
+      for (let i = 0; i < allAddresses.length; i += BATCH_SIZE) {
+        const batch = allAddresses.slice(i, i + BATCH_SIZE);
+        console.log(
+          `Processing batch ${i / BATCH_SIZE + 1}, addresses ${i + 1} to ${i + batch.length}`,
         );
+
+        if (!account) break;
+
+        try {
+          await addFreeMintBatch({
+            account: account,
+            freeMints: batch.map(({ address, timestamp, amount }) => ({
+              to: address,
+              amount: amount,
+              expiration_timestamp: timestamp,
+            })),
+          });
+
+          // Store successful addresses with timestamp
+          successAddresses.push(
+            ...batch.map((address) => ({
+              ...address,
+              timestamp: new Date().getTime(),
+            })),
+          );
+
+          console.log(`Successfully processed batch ${i / BATCH_SIZE + 1}`);
+        } catch (error) {
+          console.error(`Error processing batch ${i / BATCH_SIZE + 1}:`, error);
+          // Store failed addresses with error timestamp
+          failedAddresses.push(
+            ...batch.map((address) => ({
+              ...address,
+              timestamp: new Date().getTime(),
+            })),
+          );
+        }
+
+        // Optional delay between batches to avoid overload
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
+
+      // Final summary
+      console.log("Processing completed:");
+      console.log(
+        `- Successfully processed: ${successAddresses.length} addresses`,
+      );
+      console.log(`- Failed addresses: ${failedAddresses.length}`);
+
+      // Create and download CSV for failed addresses if any
+      if (failedAddresses.length > 0) {
+        const csvContent = createCsvFailContent(failedAddresses);
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+        saveCsvToFile(csvContent, `failed_addresses_${timestamp}.csv`);
+      }
+
+      // Create and download CSV for successful addresses
+      if (successAddresses.length > 0) {
+        const csvContent = createCsvFailContent(successAddresses);
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+        saveCsvToFile(csvContent, `successful_addresses_${timestamp}.csv`);
+      }
+
+      // Return results for further processing if needed
+      return {
+        success: successAddresses,
+        failed: failedAddresses,
+        totalProcessed: successAddresses.length + failedAddresses.length,
+      };
     } catch (error) {
-      console.error("Error in handleAddFreeMint:", error);
+      console.error("Fatal error in handleAddFreeMint:", error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
