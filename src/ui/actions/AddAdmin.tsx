@@ -26,12 +26,10 @@ export const AddAdmin = ({ address }: { address: string }) => {
     return !account;
   }, [account]);
 
-  if (disabled) return null;
-
   return (
     <Button
       isLoading={isLoading}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       onClick={handleClick}
       className="text-xl"
     >

@@ -65,7 +65,7 @@ export interface UpdateNormalModePrice extends Signer {
 }
 
 export interface SetAdmin extends Signer {
-  address: bigint;
+  address: string;
 }
 
 export interface DeleteAdmin extends Signer {
