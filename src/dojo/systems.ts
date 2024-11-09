@@ -2,7 +2,7 @@ import type { IWorld } from "./contractSystems";
 import { toast } from "sonner";
 import * as SystemTypes from "./contractSystems";
 import { shortenHex } from "@dojoengine/utils";
-import { Account, GetTransactionReceiptResponse } from "starknet";
+import { Account } from "starknet";
 
 export type SystemCalls = ReturnType<typeof systems>;
 

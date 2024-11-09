@@ -1,52 +1,62 @@
 import { Connector } from "@starknet-react/core";
-import CartridgeConnector from "@cartridge/connector";
+import ControllerConnector from "@cartridge/connector/controller";
 import { getContractByName } from "@dojoengine/core";
-import { ControllerOptions, PaymasterOptions } from "@cartridge/controller";
-import { shortString } from "starknet";
+import { ColorMode, ControllerOptions } from "@cartridge/controller";
 import { manifest } from "./config/manifest";
 
-const { VITE_PUBLIC_GAME_TOKEN_ADDRESS, VITE_PUBLIC_NODE_URL } = import.meta
-  .env;
+const {
+  VITE_PUBLIC_GAME_TOKEN_ADDRESS,
+  VITE_PUBLIC_GAME_CREDITS_TOKEN_ADDRESS,
+  VITE_PUBLIC_NODE_URL,
+} = import.meta.env;
 
 export type Manifest = typeof manifest;
 
+const colorMode: ColorMode = "dark";
+const theme = "zkube";
+const namespace = "zkube";
+const slot = "zkube-slotdev";
+
 const account_contract_address = getContractByName(
   manifest,
-  "zkube",
+  namespace,
   "account",
 )?.address;
 
 const play_contract_address = getContractByName(
   manifest,
-  "zkube",
+  namespace,
   "play",
 )?.address;
 
 const chest_contract_address = getContractByName(
   manifest,
-  "zkube",
+  namespace,
   "chest",
 )?.address;
 
 const tournament_contract_address = getContractByName(
   manifest,
-  "zkube",
+  namespace,
   "tournament",
-)?.address;
-
-const settings_contract_address = getContractByName(
-  manifest,
-  "zkube",
-  "settings",
 )?.address;
 
 console.log("account_contract_address", account_contract_address);
 console.log("play_contract_address", play_contract_address);
 console.log("chest_contract_address", chest_contract_address);
 console.log("tournament_contract_address", tournament_contract_address);
-console.log("settings_contract_address", settings_contract_address);
 
 const policies = [
+  // erc721
+  {
+    target: VITE_PUBLIC_GAME_CREDITS_TOKEN_ADDRESS,
+    method: "public_mint",
+  },
+  {
+    target: VITE_PUBLIC_GAME_CREDITS_TOKEN_ADDRESS,
+    method: "approve",
+  },
+  // erc20
   {
     target: VITE_PUBLIC_GAME_TOKEN_ADDRESS,
     method: "approve",
@@ -93,17 +103,16 @@ const policies = [
   },
 ];
 
-const paymaster: PaymasterOptions = {
-  caller: shortString.encodeShortString("ANY_CALLER"),
-};
-
 const options: ControllerOptions = {
   rpc: VITE_PUBLIC_NODE_URL,
+  namespace,
+  slot,
   policies,
-  paymaster,
+  theme,
+  colorMode,
 };
 
-const cartridgeConnector = new CartridgeConnector(
+const cartridgeConnector = new ControllerConnector(
   options,
 ) as never as Connector;
 

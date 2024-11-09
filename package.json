@@ -22,8 +22,8 @@
     "create-models": "./bin/models.cjs"
   },
   "dependencies": {
-    "@cartridge/connector": "^0.3.46",
-    "@cartridge/controller": "^0.3.46",
+    "@cartridge/connector": "0.5.0-alpha.7",
+    "@cartridge/controller": "0.5.0-alpha.7",
     "@dojoengine/core": "1.0.0-alpha.24",
     "@dojoengine/create-burner": "1.0.0-alpha.24",
     "@dojoengine/react": "1.0.0-alpha.24",
@@ -55,7 +55,7 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@radix-ui/react-visually-hidden": "^1.1.0",
     "@starknet-react/chains": "^0.1.7",
-    "@starknet-react/core": "2.9.0",
+    "@starknet-react/core": "3.5.0",
     "@tsparticles/engine": "^3.5.0",
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.5.0",
