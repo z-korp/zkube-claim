@@ -15,8 +15,8 @@ const Airdrop = () => {
     },
   } = useDojo();
 
-  const { account } = useAccount();
-  const freeGames = useFreeMint({ player_id: account?.address });
+  const { account, address } = useAccount();
+  const freeGames = useFreeMint({ player_id: address });
   const [controllerAddress, setControllerAddress] = useState("");
   // const [claimStatus, setClaimStatus] = useState({
   //   claimed: false,
@@ -44,7 +44,28 @@ const Airdrop = () => {
       setIsLoading(false);
     }
   }, [account]);
-  console.log("account", account);
+
+  const handleTransfer = useCallback(async () => {
+    console.log("Starting transfer process...");
+    setIsLoading(true);
+    try {
+      console.log("account", account);
+      if (account) {
+        console.log("Account found, attempting to transfer to controller...");
+        await claimFreeMint({ account: account as Account });
+        console.log("Successfully transferred to controller");
+      } else {
+        console.log("No account found");
+      }
+    } catch (error) {
+      console.error("Error transferring:", error);
+    } finally {
+      console.log("Transfer process completed");
+      setIsLoading(false);
+    }
+  }, [account]);
+
+  console.log("freeGames", freeGames);
   if (!freeGames) {
     return (
       <Card className="w-full max-w-2xl mx-auto bg-gray-900">
@@ -63,7 +84,7 @@ const Airdrop = () => {
       <Card className="bg-gray-900">
         <CardHeader>
           <CardTitle className="text-xl font-bold text-white">
-            ZKube Airdrop Claim
+            zKube Airdrop Claim
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -74,26 +95,15 @@ const Airdrop = () => {
                 {freeGames?.number} Games
               </span>
             </div>
-            <div className="space-y-1">
-              {/* <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-300">
-                  Claimed Games: {mockUserData.claimedGames} /{" "}
-                  {mockUserData.totalGames}
-                </span>
-              </div> */}
-            </div>
-            {/* <div className="space-y-1">
-              <span className="text-sm text-gray-400">Eligible for:</span>
-              {mockUserData.collections.map((collection, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <Check size={16} className="text-green-500" />
-                  <span className="text-sm text-gray-300">
-                    {collection.name}: {collection.amount} points
-                  </span>
-                </div>
-              ))}
-            </div> */}
           </div>
+          <Button
+            className="w-full"
+            onClick={handleClaim}
+            disabled={isLoading}
+            isLoading={isLoading}
+          >
+            Claim
+          </Button>
           <div className="mb-2">
             <Input
               placeholder="Enter controller address"
@@ -104,8 +114,9 @@ const Airdrop = () => {
           </div>
           <Button
             className="w-full bg-green-600 hover:bg-green-700"
-            onClick={handleClaim}
+            onClick={handleTransfer}
             disabled={isLoading || !controllerAddress}
+            isLoading={isLoading}
           >
             Transfer to Controller
           </Button>

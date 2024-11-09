@@ -26,7 +26,7 @@ export const useFreeMint = ({
   const component = useComponentValue(Mint, key);
   const mint = useMemo(() => {
     return component ? new MintClass(component) : null;
-  }, [component]);
+  }, [MintClass, component]);
 
   return mint;
 };

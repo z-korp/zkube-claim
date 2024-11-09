@@ -39,27 +39,31 @@ export const AdminPage = () => {
 
     setIsLoading(true);
     try {
-      //TODO ENLEVER SLICE
       const addresses = csvContent.slice(0, 3).map((row) => {
         const addressIndex = headers.indexOf("address");
         const timestampIndex = headers.indexOf("tenDaysFromNow");
+        const numberIndex = headers.indexOf("number");
+
+        // Get the number from CSV or default to 10 if not found
+        const amount = numberIndex !== -1 ? parseInt(row[numberIndex]) : 10;
+
         return {
           address: row[addressIndex],
           timestamp: parseInt(row[timestampIndex]),
+          amount: amount,
         };
       });
 
       console.log("Processing free mints for addresses:", addresses);
 
-      console.log("addresses", addresses);
       if (!account) return;
 
       try {
         await addFreeMintBatch({
           account: account,
-          freeMints: addresses.map(({ address, timestamp }) => ({
+          freeMints: addresses.map(({ address, timestamp, amount }) => ({
             to: address,
-            amount: 10,
+            amount: amount, // Use the amount from CSV
             expiration_timestamp: timestamp,
           })),
         });
@@ -67,13 +71,12 @@ export const AdminPage = () => {
         console.log("Successfully added free mints for:", addresses);
       } catch (error) {
         console.error(
-          "Error adding free mints for address",
+          "Error adding free mints for addresses:",
           addresses,
           ":",
           error,
         );
       }
-      // }
     } catch (error) {
       console.error("Error in handleAddFreeMint:", error);
     } finally {
@@ -89,34 +92,39 @@ export const AdminPage = () => {
 
     setIsLoading(true);
     try {
-      // Get first 5 addresses from CSV
       const addresses = csvContent.map((row) => {
         const addressIndex = headers.indexOf("address");
+        const numberIndex = headers.indexOf("number");
         const timestampIndex = headers.indexOf("tenDaysFromNow");
+
+        // Get the number from CSV or default to 10 if not found
+        const amount = numberIndex !== -1 ? parseInt(row[numberIndex]) : 10;
+
         return {
           address: row[addressIndex],
           timestamp: parseInt(row[timestampIndex]),
+          amount: amount,
         };
       });
+
       if (!account) return;
 
       try {
         await addFreeMint({
           to: addresses[0].address,
-          amount: 10,
+          amount: addresses[0].amount, // Use the amount from CSV
           expiration_timestamp: addresses[0].timestamp,
           account: account,
         });
-        console.log("Successfully added free mints for:", addresses);
+        console.log("Successfully added free mints for:", addresses[0]);
       } catch (error) {
         console.error(
-          "Error adding free mints for address",
-          addresses,
+          "Error adding free mints for address:",
+          addresses[0],
           ":",
           error,
         );
       }
-      // }
     } catch (error) {
       console.error("Error in handleAddFreeMint:", error);
     } finally {
@@ -138,7 +146,11 @@ export const AdminPage = () => {
       const reader = new FileReader();
       reader.onload = (e) => {
         const text = e.target?.result as string;
-        const rows = text.split("\n").map((row) => row.split(","));
+        const rows = text
+          .split("\n")
+          .map((row) =>
+            row.split(",").map((cell) => cell.trim().replace(/\r$/, "")),
+          );
         const headers = rows[0];
         headers.push("tenDaysFromNow");
 
