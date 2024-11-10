@@ -1567,7 +1567,7 @@
     },
     {
       "address": "0x344260acea6ad178de0da0cae061fa5ec2ab2d0d29d076d1c977f2985017d28",
-      "class_hash": "0x6574118d18109a31fdec96901ccf1ee92b77ab7ab030aecaaaf20981f471cdc",
+      "class_hash": "0x62eb37daac3ab227678612e790fa68306e470efb0d592489ded4154c48f6434",
       "abi": [
         {
           "type": "impl",
@@ -1632,13 +1632,6 @@
           "type": "interface",
           "name": "zkube::systems::minter::IMinter",
           "items": [
-            {
-              "type": "function",
-              "name": "mint",
-              "inputs": [],
-              "outputs": [],
-              "state_mutability": "external"
-            },
             {
               "type": "function",
               "name": "claim_free_mint",
@@ -1801,7 +1794,7 @@
     },
     {
       "address": "0x52791e30f0222ea77eb900d8039e52a5d0ecbb6e6809567219e9222c59af9c2",
-      "class_hash": "0x6acc8b325f305d562a89da51352c53110aeff01aec8b8169915b7f15773850a",
+      "class_hash": "0xf589b21cc0f4840e10614b2230f5c8d9e86f40e67c7fc77e624138f77c3cb8",
       "abi": [
         {
           "type": "impl",
