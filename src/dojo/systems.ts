@@ -270,6 +270,17 @@ export function systems({ client }: { client: IWorld }) {
     );
   };
 
+  const sponsorTournament = async ({
+    account,
+    ...props
+  }: SystemTypes.TournamentSponsor) => {
+    await handleTransaction(
+      account,
+      () => client.tournament.sponsor({ account, ...props }),
+      "Tournament has been sponsored.",
+    );
+  };
+
   return {
     // account
     create,
@@ -284,6 +295,7 @@ export function systems({ client }: { client: IWorld }) {
     sponsorChest,
     // tournament
     claimTournament,
+    sponsorTournament,
     // settings
     setAdmin,
     deleteAdmin,
