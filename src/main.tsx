@@ -15,9 +15,11 @@ import {
   jsonRpcProvider,
   starkscan,
 } from "@starknet-react/core";
-import { sepolia } from "@starknet-react/chains";
+import { mainnet, sepolia } from "@starknet-react/chains";
 
 import "./index.css";
+
+const { VITE_PUBLIC_DEPLOY_TYPE } = import.meta.env;
 
 function rpc() {
   return {
@@ -59,7 +61,7 @@ export function Main() {
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <StarknetConfig
           autoConnect
-          chains={[sepolia]}
+          chains={[VITE_PUBLIC_DEPLOY_TYPE === "mainnet" ? mainnet : sepolia]}
           connectors={connectors}
           explorer={starkscan}
           provider={jsonRpcProvider({ rpc })}

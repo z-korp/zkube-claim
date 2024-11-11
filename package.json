@@ -9,6 +9,7 @@
     "slottest": "vite --mode slottest",
     "slotdev": "vite --mode slotdev",
     "sepolia": "vite --mode sepolia --host",
+    "mainnet": "vite --mode mainnet --host",
     "sepoliadev1": "vite --mode sepoliadev1 --host",
     "sepoliadev2": "vite --mode sepoliadev2 --host",
     "build": "tsc && vite build",
