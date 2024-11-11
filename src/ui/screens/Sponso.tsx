@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { formatPrize } from "@/utils/wei";
-import { useChest } from "@/hooks/useChest";
 import { Separator } from "../elements/separator";
 import { useAllChests } from "@/hooks/useAllChests";
-import { useTournaments } from "@/hooks/useTournaments";
 import { Progress } from "../elements/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "../elements/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../elements/tabs";
 import { gsap } from "gsap";
+import { SponsorChest } from "../actions/SponsorChest";
 
 const { VITE_PUBLIC_GAME_TOKEN_SYMBOL } = import.meta.env;
 
@@ -35,7 +34,9 @@ export const SponsoPage = () => {
       ease: "power1.inOut",
     });
     if (particlesRef.current) {
-      const particles = (particlesRef.current as HTMLElement).querySelectorAll(".particle");
+      const particles = (particlesRef.current as HTMLElement).querySelectorAll(
+        ".particle",
+      );
       particles.forEach((particle) => {
         gsap.to(particle, {
           x: "random(-200, 200)",
@@ -66,7 +67,11 @@ export const SponsoPage = () => {
           <Tabs defaultValue="chest" className="w-[400px] md-4 border-red-500">
             <div className="flex justify-center">
               <TabsList className="">
-                <TabsTrigger value="chest" className="mx-auto" onClick={startAnimation}>
+                <TabsTrigger
+                  value="chest"
+                  className="mx-auto"
+                  onClick={startAnimation}
+                >
                   Chest
                 </TabsTrigger>
                 <TabsTrigger value="tournaments" className="mx-auto">
@@ -77,7 +82,10 @@ export const SponsoPage = () => {
             <TabsContent value="chest">
               <CardContent className="space-y-6 overflow-y-auto">
                 <div className="relative rounded-lg bg-gray-800 p-4 flex flex-col items-center">
-                  <div ref={particlesRef} className="absolute inset-0 z-0 overflow-hidden">
+                  <div
+                    ref={particlesRef}
+                    className="absolute inset-0 z-0 overflow-hidden"
+                  >
                     {Array.from({ length: 100 }).map((_, index) => (
                       <div
                         key={index}
@@ -99,8 +107,8 @@ export const SponsoPage = () => {
                   <p>{`Total Prize: ${formatPrize(currentChest.prize, VITE_PUBLIC_GAME_TOKEN_SYMBOL)}`}</p>
                   <h1>
                     {currentChest.points.toString()}/
-                    {currentChest.point_target.toString()} points ({(currentChest.points / currentChest.point_target) * 100} %)
-                   
+                    {currentChest.point_target.toString()} points (
+                    {(currentChest.points / currentChest.point_target) * 100} %)
                   </h1>
                   <Progress
                     value={
@@ -109,6 +117,7 @@ export const SponsoPage = () => {
                     className="w-full h-6 mt-6"
                   />
                 </div>
+                {currentChest && <SponsorChest chest_id={currentChest.id} />}
               </CardContent>
             </TabsContent>
             <TabsContent value="tournaments">

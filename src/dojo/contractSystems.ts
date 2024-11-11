@@ -338,16 +338,23 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
       try {
         return await provider.execute(
           account,
-          {
-            contractName: contract_name,
-            entrypoint: "sponsor",
-            calldata: [chest_id, amount],
-          },
+          [
+            {
+              contractAddress: VITE_PUBLIC_GAME_TOKEN_ADDRESS,
+              entrypoint: "approve",
+              calldata: [contract.address, cairo.uint256(amount)], // Set allowance
+            },
+            {
+              contractName: contract_name,
+              entrypoint: "sponsor_chest",
+              calldata: [chest_id, amount.toString()],
+            },
+          ],
           NAMESPACE,
           details,
         );
       } catch (error) {
-        console.error("Error executing sponsor:", error);
+        console.error("Error executing sponsor_chest:", error);
         throw error;
       }
     };

@@ -11,7 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../elements/dropdown-menu";
-import { BurnerAccount } from "./BurnerAccount";
 
 export const SettingsDropDown = () => {
   return (

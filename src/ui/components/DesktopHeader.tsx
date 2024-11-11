@@ -3,6 +3,7 @@ import Connect from "./Connect";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../elements/button";
+import SettingsDropDown from "./SettingsDropDown";
 
 const DesktopHeader = () => {
   const { address, status, connector } = useAccount();
@@ -37,6 +38,8 @@ const DesktopHeader = () => {
             <Button onClick={() => disconnect()}>Disconnect</Button>
           </div>
         )}
+
+        <SettingsDropDown />
       </div>
     </div>
   );

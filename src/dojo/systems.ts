@@ -198,6 +198,17 @@ export function systems({ client }: { client: IWorld }) {
     );
   };
 
+  const sponsorChest = async ({
+    account,
+    ...props
+  }: SystemTypes.ChestSponsor) => {
+    await handleTransaction(
+      account,
+      () => client.chest.sponsor({ account, ...props }),
+      "Chest has been sponsored.",
+    );
+  };
+
   const claimTournament = async ({
     account,
     ...props
@@ -270,6 +281,7 @@ export function systems({ client }: { client: IWorld }) {
     applyBonus,
     // chest
     claimChest,
+    sponsorChest,
     // tournament
     claimTournament,
     // settings
