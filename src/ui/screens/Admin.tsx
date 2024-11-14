@@ -78,7 +78,8 @@ export const AdminPage = () => {
         const timestampIndex = headers.indexOf("tenDaysFromNow");
         const numberIndex = headers.indexOf("number");
 
-        const amount = numberIndex !== -1 ? parseInt(row[numberIndex]) : 10;
+        const amount =
+          numberIndex !== -1 ? Math.min(parseInt(row[numberIndex]), 5) : 5;
 
         return {
           address: row[addressIndex],
