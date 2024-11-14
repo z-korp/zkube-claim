@@ -198,6 +198,17 @@ export function systems({ client }: { client: IWorld }) {
     );
   };
 
+  const sponsorChest = async ({
+    account,
+    ...props
+  }: SystemTypes.ChestSponsor) => {
+    await handleTransaction(
+      account,
+      () => client.chest.sponsor({ account, ...props }),
+      "Chest has been sponsored.",
+    );
+  };
+
   const claimTournament = async ({
     account,
     ...props
@@ -259,6 +270,17 @@ export function systems({ client }: { client: IWorld }) {
     );
   };
 
+  const sponsorTournament = async ({
+    account,
+    ...props
+  }: SystemTypes.TournamentSponsor) => {
+    await handleTransaction(
+      account,
+      () => client.tournament.sponsor({ account, ...props }),
+      "Tournament has been sponsored.",
+    );
+  };
+
   return {
     // account
     create,
@@ -270,8 +292,10 @@ export function systems({ client }: { client: IWorld }) {
     applyBonus,
     // chest
     claimChest,
+    sponsorChest,
     // tournament
     claimTournament,
+    sponsorTournament,
     // settings
     setAdmin,
     deleteAdmin,

@@ -1460,7 +1460,12 @@
       "init_calldata": [],
       "tag": "zkube-account",
       "selector": "0x6d28004d278bad46f01e5d8d1943b63b32617bdc735f34355e0c7e39310d4e7",
-      "systems": ["dojo_init", "create", "rename", "upgrade"]
+      "systems": [
+        "dojo_init",
+        "create",
+        "rename",
+        "upgrade"
+      ]
     },
     {
       "address": "0x976474371a91196e0555dec2962d5124dfac79ae4b05ce40a6d8bfd025914d",
@@ -1960,7 +1965,7 @@
     },
     {
       "address": "0x1bf627132630b28542228f215f92b8eee9d2db554825be20052c63687c331e4",
-      "class_hash": "0x3bd627afcf1432a0c1d3c857d06c922e3aef00708fa008294131bfd99fa5898",
+      "class_hash": "0x34cdd05042a06e8c3f3c85d38676521dd7fac7a217d75b6f86cd80139408658",
       "abi": [
         {
           "type": "impl",
@@ -2935,7 +2940,13 @@
       ],
       "tag": "zkube-tournament",
       "selector": "0x2101600e00aa39f4136a59a187bd5e197b9f3c63e08d17626effe44b379f1f5",
-      "systems": ["dojo_init", "claim", "sponsor_from", "sponsor", "upgrade"]
+      "systems": [
+        "dojo_init",
+        "claim",
+        "sponsor_from",
+        "sponsor",
+        "upgrade"
+      ]
     },
     {
       "address": "0x21fb439e26c678961f2ac031d498349788505f2f0362721bd46843caf7f71f9",
@@ -3173,7 +3184,13 @@
       ],
       "tag": "zkube-zkorp",
       "selector": "0x6cdc1046f821af7bd6d6c3a1326826e049bd14a3d8329ce42ed30430eb3b678",
-      "systems": ["dojo_init", "claim", "sponsor", "sponsor_from", "upgrade"]
+      "systems": [
+        "dojo_init",
+        "claim",
+        "sponsor",
+        "sponsor_from",
+        "upgrade"
+      ]
     }
   ],
   "models": [

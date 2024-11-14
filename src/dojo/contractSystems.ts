@@ -78,6 +78,12 @@ export interface TournamentClaim extends Signer {
   rank: number;
 }
 
+export interface TournamentSponsor extends Signer {
+  tournament_id: number;
+  mode: number;
+  amount: bigint;
+}
+
 export interface AddFreeMint extends Signer {
   to: string;
   amount: number;
@@ -338,16 +344,23 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
       try {
         return await provider.execute(
           account,
-          {
-            contractName: contract_name,
-            entrypoint: "sponsor",
-            calldata: [chest_id, amount],
-          },
+          [
+            {
+              contractAddress: VITE_PUBLIC_GAME_TOKEN_ADDRESS,
+              entrypoint: "approve",
+              calldata: [contract.address, cairo.uint256(amount)], // Set allowance
+            },
+            {
+              contractName: contract_name,
+              entrypoint: "sponsor_chest",
+              calldata: [chest_id, amount.toString()],
+            },
+          ],
           NAMESPACE,
           details,
         );
       } catch (error) {
-        console.error("Error executing sponsor:", error);
+        console.error("Error executing sponsor_chest:", error);
         throw error;
       }
     };
@@ -487,9 +500,40 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
       }
     };
 
+    const sponsor = async ({
+      account,
+      tournament_id,
+      mode,
+      amount,
+    }: TournamentSponsor) => {
+      try {
+        return await provider.execute(
+          account,
+          [
+            {
+              contractAddress: VITE_PUBLIC_GAME_TOKEN_ADDRESS,
+              entrypoint: "approve",
+              calldata: [contract.address, cairo.uint256(amount)], // Set allowance
+            },
+            {
+              contractName: contract_name,
+              entrypoint: "sponsor",
+              calldata: [tournament_id, mode, amount.toString()],
+            },
+          ],
+          NAMESPACE,
+          details,
+        );
+      } catch (error) {
+        console.error("Error executing sponsor:", error);
+        throw error;
+      }
+    };
+
     return {
       address: contract.address,
       claim,
+      sponsor,
     };
   }
 
