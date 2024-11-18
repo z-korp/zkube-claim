@@ -84,8 +84,8 @@ const Airdrop = () => {
 
   return (
     <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto z-20">
-      <BackgroundGradient className="bg-white bg-slate-900">
-        <Card className="bg-gray-900">
+      <Card className="bg-gray-900">
+        <BackgroundGradient className="bg-white bg-slate-900">
           <CardHeader>
             <CardTitle className="text-4xl font-bold text-white mb-4">
               zKube Airdrop Claim
@@ -134,8 +134,8 @@ const Airdrop = () => {
             </div>
           </div> */}
           </CardContent>
-        </Card>
-      </BackgroundGradient>
+        </BackgroundGradient>
+      </Card>
     </div>
   );
 };

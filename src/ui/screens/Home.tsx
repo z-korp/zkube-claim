@@ -14,7 +14,7 @@ export const HomePage = () => {
   useQuerySync<Schema>(toriiClient, Object.values(contractComponents), []);
 
   return (
-    <div className="relative">
+    <div className="relative ">
       {/* Background Layer */}
       <div className="absolute inset-0 w-full h-full bg-slate-900 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none" />
       <Boxes />

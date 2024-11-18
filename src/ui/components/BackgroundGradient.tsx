@@ -30,17 +30,17 @@ export const BackgroundGradient = ({
         transition={
           animate
             ? {
-                duration: 5,
+                duration: 3,
                 repeat: Infinity,
                 repeatType: "reverse",
               }
             : undefined
         }
         style={{
-          backgroundSize: animate ? "400% 400%" : undefined,
+          backgroundSize: animate ? "300% 300%" : undefined,
         }}
         className={cn(
-          "absolute inset-0 rounded-3xl z-[1] opacity-60 group-hover:opacity-100 blur-xl  transition duration-500 will-change-transform",
+          "absolute inset-0 rounded-3xl z-[1] opacity-50 group-hover:opacity-100 blur-2xl transition duration-500 will-change-transform",
           " bg-[radial-gradient(circle_farthest-side_at_0_100%,#00ccb1,transparent),radial-gradient(circle_farthest-side_at_100%_0,#7b61ff,transparent),radial-gradient(circle_farthest-side_at_100%_100%,#ffc414,transparent),radial-gradient(circle_farthest-side_at_0_0,#1ca0fb,#141316)]",
         )}
       />
@@ -51,14 +51,14 @@ export const BackgroundGradient = ({
         transition={
           animate
             ? {
-                duration: 5,
+                duration: 3,
                 repeat: Infinity,
                 repeatType: "reverse",
               }
             : undefined
         }
         style={{
-          backgroundSize: animate ? "400% 400%" : undefined,
+          backgroundSize: animate ? "300% 300%" : undefined,
         }}
         className={cn(
           "absolute inset-0 z-[1] will-change-transform",

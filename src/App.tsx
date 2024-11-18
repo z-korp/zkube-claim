@@ -16,7 +16,7 @@ const Layout: React.FC = () => {
   return (
     <div className="h-screen flex flex-col w-full">
       <Header />
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-hidden">
         <Outlet />
       </div>
     </div>
