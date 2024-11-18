@@ -72,7 +72,7 @@ const Airdrop = () => {
         <CardContent className="text-center p-6">
           <AlertCircle className="mx-auto mb-4 text-gray-400" size={32} />
           <p className="text-gray-300">
-            You are not eligible for the ZKube airdrop.
+            You are not eligible for the zKube airdrop.
           </p>
         </CardContent>
       </Card>
