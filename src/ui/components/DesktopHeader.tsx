@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../elements/button";
 import SettingsDropDown from "./SettingsDropDown";
 import { shortenAddress } from "@/utils/address";
+import HeaderNftBalance from "./HeaderNftBalance";
 
 const DesktopHeader = () => {
   const { address, status, connector } = useAccount();
@@ -25,6 +26,7 @@ const DesktopHeader = () => {
           <Connect />
         ) : (
           <div className="flex gap-4 items-center">
+            <HeaderNftBalance />
             <div className="flex gap-2 items-center">
               <p>{shortenAddress(address || "")}</p>
               <span className="text-sm text-gray-400">
