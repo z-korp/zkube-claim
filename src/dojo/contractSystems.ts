@@ -104,6 +104,10 @@ export interface AddFreeMintBatch extends Signer {
   freeMints: AddFreeMintSimple[];
 }
 
+export interface SetAddress extends Signer {
+  address: string;
+}
+
 export type IWorld = Awaited<ReturnType<typeof setupWorld>>;
 
 export async function setupWorld(provider: DojoProvider, config: Config) {
@@ -381,17 +385,14 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
       throw new Error(`Contract ${contract_name} not found in manifest`);
     }
 
-    const update_zkorp_address = async ({
-      account,
-      value,
-    }: UpdateDailyModePrice) => {
+    const update_zkorp_address = async ({ account, address }: SetAddress) => {
       try {
         return await provider.execute(
           account,
           {
             contractName: contract_name,
             entrypoint: "update_zkorp_address",
-            calldata: [value],
+            calldata: [address],
           },
           NAMESPACE,
           details,
@@ -402,17 +403,14 @@ export async function setupWorld(provider: DojoProvider, config: Config) {
       }
     };
 
-    const update_erc721_address = async ({
-      account,
-      value,
-    }: UpdateNormalModePrice) => {
+    const update_erc721_address = async ({ account, address }: SetAddress) => {
       try {
         return await provider.execute(
           account,
           {
             contractName: contract_name,
             entrypoint: "update_erc721_address",
-            calldata: [value],
+            calldata: [address],
           },
           NAMESPACE,
           details,

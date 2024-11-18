@@ -239,6 +239,28 @@ export function systems({ client }: { client: IWorld }) {
     );
   };
 
+  const updateZkorpAddress = async ({
+    account,
+    ...props
+  }: SystemTypes.SetAddress) => {
+    await handleTransaction(
+      account,
+      () => client.settings.update_zkorp_address({ account, ...props }),
+      "Zkorp address has been set.",
+    );
+  };
+
+  const updateErc721Address = async ({
+    account,
+    ...props
+  }: SystemTypes.SetAddress) => {
+    await handleTransaction(
+      account,
+      () => client.settings.update_erc721_address({ account, ...props }),
+      "ERC721 address has been set.",
+    );
+  };
+
   const addFreeMint = async ({
     account,
     ...props
@@ -299,6 +321,8 @@ export function systems({ client }: { client: IWorld }) {
     // settings
     setAdmin,
     deleteAdmin,
+    updateZkorpAddress,
+    updateErc721Address,
     // mint games
     addFreeMint,
     addFreeMintBatch,

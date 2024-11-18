@@ -29,7 +29,7 @@ dist-ssr
 target
 .vercel
 
-client/dev-dist/
+dev-dist/
 script/venv/
 
 *.db

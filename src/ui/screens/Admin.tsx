@@ -8,17 +8,64 @@ import { AddAdmin } from "../actions/AddAdmin";
 import { FreeMintManager } from "../components/FreeMintManager";
 import { useSettings } from "@/hooks/useSettings";
 import { shortenAddress } from "@/utils/address";
+import { useDojo } from "@/dojo/useDojo";
+import { useAccount } from "@starknet-react/core";
+import { Account } from "starknet";
 
 export const AdminPage = () => {
+  const {
+    setup: {
+      systemCalls: { updateZkorpAddress, updateErc721Address },
+    },
+  } = useDojo();
+
+  const { account } = useAccount();
   const [zkorpAddress, setZkorpAddress] = useState("");
   const [erc721Address, setErc721Address] = useState("");
   const [gamePrice, setGamePrice] = useState<bigint>(0n);
   const [adminAddress, setAdminAddress] = useState("");
   const admins = useAdmins();
   const { settings } = useSettings();
+  const [isLoading, setIsLoading] = useState({
+    zkorp: false,
+    erc721: false,
+    gamePrice: false,
+  });
 
-  const handleUpdateZkorpAddress = () => {
-    // Call the function to update the zkorp address
+  const handleUpdateZkorpAddress = async () => {
+    if (!zkorpAddress || !account) return;
+
+    setIsLoading((prev) => ({ ...prev, zkorp: true }));
+    try {
+      await updateZkorpAddress({
+        account: account as Account,
+        address: zkorpAddress,
+      });
+      setZkorpAddress(""); // Clear input after successful update
+    } catch (error) {
+      console.error("Failed to update zkorp address:", error);
+      // You might want to add a toast notification here
+    } finally {
+      setIsLoading((prev) => ({ ...prev, zkorp: false }));
+    }
+  };
+
+  const handleUpdateErc721Address = async () => {
+    if (!erc721Address) return;
+
+    setIsLoading((prev) => ({ ...prev, erc721: true }));
+    try {
+      await updateErc721Address({
+        account: account as Account,
+        address: erc721Address,
+      });
+      setErc721Address(""); // Clear input after successful update
+    } catch (error) {
+      console.error("Failed to update ERC721 address:", error);
+      // You might want to add a toast notification here
+    } finally {
+      setIsLoading((prev) => ({ ...prev, erc721: false }));
+    }
   };
 
   const handleUpdateGamePrice = () => {
@@ -93,7 +140,7 @@ export const AdminPage = () => {
                   className="bg-gray-800/50 border-gray-700 flex-grow ml-2"
                 />
                 <Button
-                  onClick={handleUpdateZkorpAddress}
+                  onClick={handleUpdateErc721Address}
                   className="hover:bg-blue-500 w-[180px]"
                 >
                   Update zkorp address
