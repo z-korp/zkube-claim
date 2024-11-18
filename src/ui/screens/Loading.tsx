@@ -1,5 +1,10 @@
 import ImageAssets from "@/ui/theme/ImageAssets";
 import { useTheme } from "@/ui/elements/theme-provider/hooks";
+import { Boxes } from "../components/BackgroundBoxes";
+import { cn } from "@/lib/utils";
+import { BackgroundGradient } from "../components/BackgroundGradient";
+import ConfettiExplosion from "../components/ConfettiExplosion";
+import { useRef } from "react";
 
 export const Loading = () => {
   const { themeTemplate } = useTheme();
@@ -22,6 +27,7 @@ export const Loading = () => {
           className={"h-32 md:h-40 animate-load"}
         />
       </div>
+      {/* Logo and Enter Button */}
     </div>
   );
 };
