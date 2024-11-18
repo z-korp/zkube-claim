@@ -7,6 +7,7 @@ import { useFreeMint } from "@/hooks/useFreeMint";
 import { useDojo } from "@/dojo/useDojo";
 import { Account } from "starknet";
 import { useAccount } from "@starknet-react/core";
+import { BackgroundGradient } from "../components/BackgroundGradient";
 
 const Airdrop = () => {
   const {
@@ -68,59 +69,62 @@ const Airdrop = () => {
   console.log("freeGames", freeGames);
   if (!freeGames) {
     return (
-      <Card className="w-full max-w-2xl mx-auto bg-gray-900">
-        <CardContent className="text-center p-6">
-          <AlertCircle className="mx-auto mb-4 text-gray-400" size={32} />
-          <p className="text-gray-300">
-            You are not eligible for the zKube airdrop.
-          </p>
-        </CardContent>
+      <Card className="w-full max-w-2xl mx-auto bg-gray-900 z-20">
+        <BackgroundGradient className="bg-white bg-slate-900">
+          <CardContent className="text-center p-6">
+            <AlertCircle className="mx-auto mb-4 text-gray-400" size={32} />
+            <p className="text-gray-300">
+              You are not eligible for the zKube airdrop.
+            </p>
+          </CardContent>
+        </BackgroundGradient>
       </Card>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto">
-      <Card className="bg-gray-900">
-        <CardHeader>
-          <CardTitle className="text-xl font-bold text-white">
-            zKube Airdrop Claim
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="rounded-lg bg-gray-800 p-4 space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-300">Claimable Amount</span>
-              <span className="text-white font-bold">
-                {freeGames?.number} Games
-              </span>
+    <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto z-20">
+      <BackgroundGradient className="bg-white bg-slate-900">
+        <Card className="bg-gray-900">
+          <CardHeader>
+            <CardTitle className="text-4xl font-bold text-white mb-4">
+              zKube Airdrop Claim
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="rounded-lg bg-gray-800 p-4 space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300">Claimable Amount</span>
+                <span className="text-white font-bold">
+                  {freeGames?.number} Games
+                </span>
+              </div>
             </div>
-          </div>
-          <Button
-            className="w-full"
-            onClick={handleClaim}
-            disabled={isLoading}
-            isLoading={isLoading}
-          >
-            Claim
-          </Button>
-          <div className="mb-2">
-            <Input
-              placeholder="Enter controller address"
-              value={controllerAddress}
-              onChange={(e) => setControllerAddress(e.target.value)}
-              className="bg-gray-800/50 border-gray-700"
-            />
-          </div>
-          <Button
-            className="w-full bg-green-600 hover:bg-green-700"
-            onClick={handleTransfer}
-            disabled={isLoading || !controllerAddress}
-            isLoading={isLoading}
-          >
-            Transfer to Controller
-          </Button>
-          {/* SUCCESS
+            <Button
+              className="w-full"
+              onClick={handleClaim}
+              disabled={isLoading}
+              isLoading={isLoading}
+            >
+              Claim
+            </Button>
+            <div className="mb-2">
+              <Input
+                placeholder="Enter controller address"
+                value={controllerAddress}
+                onChange={(e) => setControllerAddress(e.target.value)}
+                className="bg-gray-800/50 border-gray-700"
+              />
+            </div>
+            <Button
+              className="w-full bg-green-600 hover:bg-green-700"
+              onClick={handleTransfer}
+              disabled={isLoading || !controllerAddress}
+              isLoading={isLoading}
+            >
+              Transfer to Controller
+            </Button>
+            {/* SUCCESS
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-green-500">
               <Check size={20} />
@@ -129,8 +133,9 @@ const Airdrop = () => {
               </span>
             </div>
           </div> */}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </BackgroundGradient>
     </div>
   );
 };
