@@ -164,7 +164,7 @@ export const StatsPage = () => {
   };
 
   return (
-    <main className="container mx-auto px-4 py-8 overflow-auto">
+    <main className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-10">Game Statistics</h1>
 
       {/* Grid pour les stats globales */}
@@ -173,14 +173,20 @@ export const StatsPage = () => {
           <h2 className="text-xl font-semibold mb-4">Global Stats</h2>
           <div className="flex gap-4">
             <div className="p-2 rounded-lg">
-              <div className="text-gray-600">Finished Games</div>
-              <div className="text-2xl font-bold">{finishedGames}</div>
+              <div className="text-gray-600">Games</div>
+              <div className="text-2xl font-bold">
+                {finishedGames + ongoingGames}
+              </div>
             </div>
             <div className=" p-2 rounded-lg">
               <div className="text-gray-600">Total Score</div>
               <div className="text-2xl font-bold">
                 {totalScore.toLocaleString()}
               </div>
+            </div>
+            <div className="p-2 rounded-lg">
+              <div className="text-gray-600">Number of Players</div>
+              <div className="text-2xl font-bold">{topPlayers.length}</div>
             </div>
           </div>
         </div>

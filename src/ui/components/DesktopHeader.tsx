@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../elements/button";
 import SettingsDropDown from "./SettingsDropDown";
+import { shortenAddress } from "@/utils/address";
 
 const DesktopHeader = () => {
   const { address, status, connector } = useAccount();
@@ -13,11 +14,6 @@ const DesktopHeader = () => {
   const handleClick = useCallback(() => {
     navigate("", { replace: true });
   }, [navigate]);
-
-  const shortenAddress = (addr: string) => {
-    if (!addr) return "";
-    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-  };
 
   return (
     <div className="flex justify-center items-center p-4 flex-wrap md:justify-between">

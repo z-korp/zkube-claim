@@ -14,9 +14,11 @@ import { StatsPage } from "./ui/screens/Stats";
 
 const Layout: React.FC = () => {
   return (
-    <div className="h-screen-viewport flex flex-col w-full overflow-hidden">
+    <div className="h-screen flex flex-col w-full">
       <Header />
-      <Outlet />
+      <div className="flex-1 overflow-auto">
+        <Outlet />
+      </div>
     </div>
   );
 };
