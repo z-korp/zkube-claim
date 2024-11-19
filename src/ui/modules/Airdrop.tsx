@@ -70,7 +70,7 @@ const Airdrop = () => {
   if (!freeGames) {
     return (
       <Card className="w-full max-w-2xl mx-auto bg-gray-900 z-20">
-        <BackgroundGradient className="bg-white bg-slate-900">
+        <BackgroundGradient className="bg-slate-900">
           <CardContent className="text-center p-6">
             <AlertCircle className="mx-auto mb-4 text-gray-400" size={32} />
             <p className="text-gray-300">
@@ -83,12 +83,12 @@ const Airdrop = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto z-20">
+    <div className="flex flex-col gap-4 w-[90%] max-w-2xl mx-auto z-20">
       <Card className="bg-gray-900">
-        <BackgroundGradient className="bg-white bg-slate-900">
+        <BackgroundGradient className="bg-slate-900">
           <CardHeader>
-            <CardTitle className="text-4xl font-bold text-white mb-4">
-              zKube Airdrop Claim
+            <CardTitle className="text-4xl text-white mb-4">
+              Airdrop Claim
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -100,14 +100,17 @@ const Airdrop = () => {
                 </span>
               </div>
             </div>
-            <Button
-              className="w-full"
-              onClick={handleClaim}
-              disabled={isLoading}
-              isLoading={isLoading}
-            >
-              Claim
-            </Button>
+            <BackgroundGradient className="bg-slate-900 p-2">
+              <Button
+                className="w-full text-2xl text-neon animate-neon"
+                onClick={handleClaim}
+                disabled={isLoading}
+                isLoading={isLoading}
+                variant={"secondary"}
+              >
+                Claim
+              </Button>
+            </BackgroundGradient>
             <div className="mb-2">
               <Input
                 placeholder="Enter controller address"

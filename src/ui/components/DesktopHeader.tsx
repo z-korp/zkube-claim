@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../elements/button";
 import SettingsDropDown from "./SettingsDropDown";
 import { shortenAddress } from "@/utils/address";
+import { BackgroundGradient } from "./BackgroundGradient";
 
 const DesktopHeader = () => {
   const { address, status, connector } = useAccount();
@@ -16,7 +17,7 @@ const DesktopHeader = () => {
   }, [navigate]);
 
   return (
-    <div className="flex justify-center items-center p-4 flex-wrap md:justify-between">
+    <div className="flex justify-center items-center p-4 flex-wrap md:justify-between bg-slate-900 border-2">
       <div
         className="cursor-pointer flex gap-8 items-center justify-end w-full"
         onClick={handleClick}
@@ -31,7 +32,11 @@ const DesktopHeader = () => {
                 ({connector?.id || "unknown"})
               </span>
             </div>
-            <Button onClick={() => disconnect()}>Disconnect</Button>
+            <BackgroundGradient className="bg-slate-900">
+              <button className="p-2" onClick={() => disconnect()}>
+                Disconnect
+              </button>
+            </BackgroundGradient>
           </div>
         )}
 
