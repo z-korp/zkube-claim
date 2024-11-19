@@ -21,7 +21,9 @@ export const HomePage = () => {
   const isMdOrLarger = useMediaQuery({ query: "(min-width: 768px)" });
 
   return (
-    <div className="relative ">
+    <div
+      className={`relative ${!isMdOrLarger && "overflow-y-auto overflow-x-hidden"}`}
+    >
       {/* Background Layer */}
       <div className="absolute inset-0 w-full h-full bg-slate-900 z-10 [mask-image:radial-gradient(transparent,white)] pointer-events-none" />
       <ConfettiExplosion enter={false}>
