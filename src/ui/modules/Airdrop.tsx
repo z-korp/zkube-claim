@@ -10,11 +10,12 @@ import { Account } from "starknet";
 import { useNftBalance } from "@/hooks/useNftBalance";
 import { useContract, useSendTransaction } from "@starknet-react/core";
 import { erc721ABI } from "@/utils/erc721";
-import { showToast } from "@/utils/toast";
+import { isMdOrLarger, showToast } from "@/utils/toast";
 import HeaderNftBalance from "../components/HeaderNftBalance";
 import { BackgroundGradient } from "../components/BackgroundGradient";
 import { useAccount } from "@starknet-react/core";
 import { Opacity } from "@tsparticles/engine";
+import { useMediaQuery } from "react-responsive";
 
 const { VITE_PUBLIC_GAME_CREDITS_TOKEN_ADDRESS } = import.meta.env;
 
@@ -42,6 +43,7 @@ export const Airdrop = () => {
 
   const freeGames = useFreeMint({ player_id: account?.address });
   const { balance } = useNftBalance(account?.address ?? "");
+  const isMdOrLarger = useMediaQuery({ query: "(min-width: 768px)" });
 
   useEffect(() => {
     if (balance !== undefined && balance !== 0n) {
@@ -132,7 +134,9 @@ export const Airdrop = () => {
       <Card className="bg-gray-900">
         <BackgroundGradient className="bg-slate-900">
           <CardHeader>
-            <CardTitle className="text-4xl text-white mb-4">
+            <CardTitle
+              className={`${isMdOrLarger ? "text-4xl" : "text-2xl"} text-white mb-4`}
+            >
               Airdrop Claim
             </CardTitle>
           </CardHeader>
@@ -154,7 +158,7 @@ export const Airdrop = () => {
                     variant={"secondary"}
                     disabled={claimStatus.claimed}
                   >
-                    <Wallet className="mr-2 h-4 w-4" />
+                    <Wallet className="mr-4 h-6 w-6" />
                     {claimStatus.claimed ? "Claimed" : "Claim Airdrop"}
                   </Button>
                 </BackgroundGradient>
@@ -174,7 +178,9 @@ export const Airdrop = () => {
       <Card className="bg-gray-900">
         <BackgroundGradient className="bg-slate-900">
           <CardHeader>
-            <CardTitle className="text-xl font-bold text-white flex justify-between items-center">
+            <CardTitle
+              className={`${isMdOrLarger ? "text-4xl" : "text-xl"} text-white flex justify-between items-center`}
+            >
               <div>Transfer to Controller</div>
               <HeaderNftBalance />
             </CardTitle>
