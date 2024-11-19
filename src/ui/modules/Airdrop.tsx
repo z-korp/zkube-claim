@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { AlertCircle, Check, Wallet } from "lucide-react";
+import { Check, Wallet } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../elements/card";
 import { Button } from "../elements/button";
 import { Input } from "../elements/input";
@@ -10,11 +10,10 @@ import { Account } from "starknet";
 import { useNftBalance } from "@/hooks/useNftBalance";
 import { useContract, useSendTransaction } from "@starknet-react/core";
 import { erc721ABI } from "@/utils/erc721";
-import { isMdOrLarger, showToast } from "@/utils/toast";
+import { showToast } from "@/utils/toast";
 import HeaderNftBalance from "../components/HeaderNftBalance";
 import { BackgroundGradient } from "../components/BackgroundGradient";
-import { useAccount } from "@starknet-react/core";
-import { Opacity } from "@tsparticles/engine";
+
 import { useMediaQuery } from "react-responsive";
 
 const { VITE_PUBLIC_GAME_CREDITS_TOKEN_ADDRESS } = import.meta.env;
