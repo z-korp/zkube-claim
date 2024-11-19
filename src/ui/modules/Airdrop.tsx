@@ -144,6 +144,7 @@ export const Airdrop = () => {
                   {freeGames?.number ?? 0} Games
                 </span>
               </div>
+              <br></br>
 
               {!claimStatus.claimed || !claimStatus.showSuccess ? (
                 <BackgroundGradient className="bg-slate-900 p-2">
