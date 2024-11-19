@@ -8,6 +8,7 @@ import { useDojo } from "@/dojo/useDojo";
 import { Account } from "starknet";
 import { useAccount } from "@starknet-react/core";
 import { BackgroundGradient } from "../components/BackgroundGradient";
+import { Opacity } from "@tsparticles/engine";
 
 const Airdrop = () => {
   const {
@@ -102,9 +103,8 @@ const Airdrop = () => {
             </div>
             <BackgroundGradient className="bg-slate-900 p-2">
               <Button
-                className="w-full text-2xl text-neon animate-neon"
+                className={`w-full text-2xl text-neon animate-neon ${isLoading ? "opacity-50 pointer-events-none" : ""}`}
                 onClick={handleClaim}
-                disabled={isLoading}
                 isLoading={isLoading}
                 variant={"secondary"}
               >
