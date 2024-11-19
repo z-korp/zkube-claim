@@ -123,7 +123,7 @@ const ConfettiExplosion = ({ children, enter }: ConfettiExplosionProps) => {
   };
 
   return (
-    <div id="tsparticles" className="z-30" onClick={handleClick}>
+    <div id="tsparticles" className="z-1000" onClick={handleClick}>
       {children}
     </div>
   );

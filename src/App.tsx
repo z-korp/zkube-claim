@@ -11,12 +11,14 @@ import { HomePage } from "./ui/screens/Home";
 import { AdminPage } from "./ui/screens/Admin";
 import { SponsoPage } from "./ui/screens/Sponso";
 import { StatsPage } from "./ui/screens/Stats";
+import { useMediaQuery } from "react-responsive";
 
 const Layout: React.FC = () => {
+  const isMdOrLarger = useMediaQuery({ query: "(min-width: 768px)" });
   return (
     <div className="h-screen flex flex-col w-full">
       <Header />
-      <div className="flex-1 overflow-auto">
+      <div className={`flex-1 overflow-hidden`}>
         <Outlet />
       </div>
     </div>

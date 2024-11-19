@@ -12,6 +12,7 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../elements/button";
 import Connect from "./Connect";
+import { BackgroundGradient } from "./BackgroundGradient";
 
 const MobileHeader = () => {
   const { address, status, connector } = useAccount();
@@ -28,7 +29,7 @@ const MobileHeader = () => {
   };
 
   return (
-    <div className="px-3 py-2 flex gap-3">
+    <div className="px-3 py-2 flex gap-3 bg-slate-900 border-2">
       <Drawer direction="left">
         <DrawerTrigger>
           <FontAwesomeIcon icon={faBars} size="xl" />
@@ -47,7 +48,11 @@ const MobileHeader = () => {
                       ({connector?.id || "unknown"})
                     </span>
                   </div>
-                  <Button onClick={() => disconnect()}>Disconnect</Button>
+                  <BackgroundGradient className="bg-slate-900">
+                    <button className="p-2" onClick={() => disconnect()}>
+                      Disconnect
+                    </button>
+                  </BackgroundGradient>
                 </>
               )}
             </div>
@@ -59,7 +64,9 @@ const MobileHeader = () => {
           zKube
         </p>
         <div className="flex gap-2">
-          {status !== "connected" && <Connect />}
+          <BackgroundGradient className="bg-slate-900">
+            {status !== "connected" && <Connect />}
+          </BackgroundGradient>
         </div>
       </div>
     </div>
