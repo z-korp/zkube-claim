@@ -1,10 +1,9 @@
 import { useAccount } from "@starknet-react/core";
 import { KATANA_ETH_CONTRACT_ADDRESS } from "@dojoengine/core";
 import Balance from "./Balance";
-import { useMediaQuery } from "react-responsive";
 import DisconnectButton from "./DisconnectButton";
-import { useControllerUsername } from "@/hooks/useControllerUsername";
 import { FaucetButton } from "./FaucetButton";
+import { useMediaQuery } from "react-responsive";
 
 const { VITE_PUBLIC_GAME_TOKEN_ADDRESS, VITE_PUBLIC_GAME_TOKEN_SYMBOL } =
   import.meta.env;
@@ -15,7 +14,6 @@ const shortAddress = (address: string, size = 4) => {
 
 const AccountDetails = () => {
   const { status, address } = useAccount();
-  const { username } = useControllerUsername();
   const isMdOrLarger = useMediaQuery({ query: "(min-width: 768px)" });
 
   if (status === "connected" && address) {
@@ -23,7 +21,6 @@ const AccountDetails = () => {
       <div className="flex gap-3 items-center flex-col w-full">
         <div className="flex items-center gap-3 w-full">
           <div className="flex items-center gap-1 md:gap-2 rounded-lg bg-secondary text-secondary-foreground shadow-sm px-2 md:px-3 py-1 justify-between h-[36px] w-full">
-            <div className="px-1">{username}</div>
             <p className="text-sm">
               {shortAddress(address, isMdOrLarger ? 5 : 6)}
             </p>

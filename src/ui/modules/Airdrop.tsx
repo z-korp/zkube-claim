@@ -3,17 +3,19 @@ import { Check, Wallet } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../elements/card";
 import { Button } from "../elements/button";
 import { Input } from "../elements/input";
-import useAccountCustom from "@/hooks/useAccountCustom";
 import { useFreeMint } from "@/hooks/useFreeMint";
 import { useDojo } from "@/dojo/useDojo";
 import { Account } from "starknet";
 import { useNftBalance } from "@/hooks/useNftBalance";
-import { useContract, useSendTransaction } from "@starknet-react/core";
+import {
+  useAccount,
+  useContract,
+  useSendTransaction,
+} from "@starknet-react/core";
 import { erc721ABI } from "@/utils/erc721";
 import { showToast } from "@/utils/toast";
 import HeaderNftBalance from "../components/HeaderNftBalance";
 import { BackgroundGradient } from "../components/BackgroundGradient";
-
 import { useMediaQuery } from "react-responsive";
 
 const { VITE_PUBLIC_GAME_CREDITS_TOKEN_ADDRESS } = import.meta.env;
@@ -24,7 +26,7 @@ export const Airdrop = () => {
       systemCalls: { claimFreeMint },
     },
   } = useDojo();
-  const { account } = useAccountCustom();
+  const { account } = useAccount();
   const [claimStatus, setClaimStatus] = useState({
     claimed: false,
     amountClaimed: "0",

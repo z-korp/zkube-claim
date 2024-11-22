@@ -12,7 +12,8 @@ import {
 } from "../elements/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../elements/tabs";
 import { useDojo } from "@/dojo/useDojo";
-import useAccountCustom from "@/hooks/useAccountCustom";
+import { useAccount } from "@starknet-react/core";
+import { Account } from "starknet";
 
 interface FailedAddress {
   address: string;
@@ -30,7 +31,7 @@ export const FreeMintManager = () => {
   const [csvContent, setCsvContent] = useState<Array<Array<string>>>([]);
   const [headers, setHeaders] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { account } = useAccountCustom();
+  const { account } = useAccount();
 
   // Manual input state
   const [address, setAddress] = useState("");
@@ -141,7 +142,7 @@ export const FreeMintManager = () => {
 
         try {
           await addFreeMintBatch({
-            account: account,
+            account: account as Account,
             freeMints: batch.map(({ address, timestamp, amount }) => ({
               to: address,
               amount: amount,
@@ -219,7 +220,7 @@ export const FreeMintManager = () => {
     setIsLoading(true);
     try {
       await addFreeMint({
-        account,
+        account: account as Account,
         to: params.address,
         amount: params.amount,
         expiration_timestamp: params.timestamp,

@@ -29,9 +29,12 @@ const ConnectDialog: React.FC<ConnectDialogProps> = ({ isOpen, onClose }) => {
                 disabled={!connector.available()}
                 className="flex flex-row items-center justify-start gap-4"
               >
-                {connector.icon.light && (
+                {typeof connector.icon === "string" ? (
+                  <img src={connector.icon} className="w-10 h-10 p-2" />
+                ) : (
                   <img src={connector.icon.dark} className="w-10 h-10 p-2" />
                 )}
+
                 <p className="">Connect {connector.name}</p>
               </Button>
             );

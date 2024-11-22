@@ -7,8 +7,6 @@ import { world } from "./world.ts";
 import { Config } from "../../dojo.config.ts";
 import { setupWorld } from "./contractSystems.ts";
 import { DojoProvider } from "@dojoengine/core";
-import { BurnerManager } from "@dojoengine/create-burner";
-import { Account } from "starknet";
 
 export type SetupResult = Awaited<ReturnType<typeof setup>>;
 
@@ -37,7 +35,7 @@ export async function setup({ ...config }: Config) {
     contractComponents as any,
     undefined,
     [],
-    30000,
+    30_000,
     false,
   );
 
