@@ -56,6 +56,7 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        neon: "#66D4F6",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -85,6 +86,28 @@ export default {
             "animation-timing-function": "cubic-bezier(0.8, 0, 1, 1)",
           },
         },
+        "neon-pulse": {
+          "0%, 100%": {
+            textShadow: "0 0 8px #66D4F6, 0 0 12px #66D4F6, 0 0 16px #66D4F6",
+          },
+          "50%": {
+            textShadow: "0 0 12px #66D4F6, 0 0 18px #66D4F6, 0 0 24px #66D4F6",
+          },
+        },
+        glow: {
+          "0%, 100%": {
+            boxShadow:
+              "0 0 10px #00ccb1, 0 0 20px #7b61ff, 0 0 30px #ffc414, 0 0 40px #1ca0fb",
+          },
+          "50%": {
+            boxShadow:
+              "0 0 15px #00ccb1, 0 0 30px #7b61ff, 0 0 45px #ffc414, 0 0 60px #1ca0fb",
+          },
+        },
+        pulseOpacity: {
+          "0%, 100%": { opacity: "0.7" },
+          "50%": { opacity: "1.0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -92,21 +115,36 @@ export default {
         "zoom-in-out": "zoom-in-out 30s ease-in-out infinite",
         "spin-slow": "spin 2s linear infinite",
         load: "load 1s infinite",
+        neon: "neon-pulse 3s ease-in-out infinite",
+        glow: "glow 3s ease-in-out infinite",
+        pulseOpacity: "pulseOpacity 3s ease-in-out infinite",
       },
     },
   },
-  plugins: [import("tailwindcss-animate"),addVariablesForColors,],
+  plugins: [
+    import("tailwindcss-animate"),
+    addVariablesForColors,
+    function ({ addUtilities }) {
+      addUtilities({
+        ".text-neon": {
+          color: "#66D4F6",
+          textShadow: "0 0 5px #66D4F6, 0 0 10px #66D4F6, 0 0 15px #66D4F6",
+          willChange: "text-shadow, opacity",
+        },
+      });
+    },
+  ],
 };
 
 import flattenColorPalette from "tailwindcss/lib/util/flattenColorPalette";
 
 // This plugin adds each Tailwind color as a global CSS variable, e.g. var(--gray-200).
-function addVariablesForColors({ addBase, theme }: any) {
+function addVariablesForColors({ addBase, theme }) {
   let allColors = flattenColorPalette(theme("colors"));
   let newVars = Object.fromEntries(
-    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val]),
   );
- 
+
   addBase({
     ":root": newVars,
   });

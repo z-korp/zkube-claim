@@ -35,8 +35,18 @@ export function Main() {
   const connectors = [argent(), braavos()];
 
   const [setupResult, setSetupResult] = useState<SetupResult | null>(null);
+  const [ready, setReady] = useState(false);
+  const [enter, setEnter] = useState(false);
 
-  const loading = useMemo(() => !setupResult, [setupResult]);
+  const loading = useMemo(
+    () => !enter || !setupResult || !ready,
+    [enter, setupResult, ready],
+  );
+
+  useEffect(() => {
+    if (!enter) return;
+    setTimeout(() => setReady(true), 2000);
+  }, [enter]);
 
   useEffect(() => {
     async function initialize() {
@@ -44,7 +54,7 @@ export function Main() {
       setSetupResult(result);
     }
     initialize();
-  }, []);
+  }, [enter]);
 
   return (
     <React.StrictMode>
@@ -64,7 +74,7 @@ export function Main() {
                 </SoundPlayerProvider>
               </DojoProvider>
             ) : (
-              <Loading />
+              <Loading enter={enter} setEnter={setEnter} />
             )}
           </MusicPlayerProvider>
         </StarknetConfig>

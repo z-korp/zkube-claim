@@ -12,6 +12,9 @@ import { useContract, useSendTransaction } from "@starknet-react/core";
 import { erc721ABI } from "@/utils/erc721";
 import { showToast } from "@/utils/toast";
 import HeaderNftBalance from "../components/HeaderNftBalance";
+import { BackgroundGradient } from "../components/BackgroundGradient";
+
+import { useMediaQuery } from "react-responsive";
 
 const { VITE_PUBLIC_GAME_CREDITS_TOKEN_ADDRESS } = import.meta.env;
 
@@ -39,6 +42,7 @@ export const Airdrop = () => {
 
   const freeGames = useFreeMint({ player_id: account?.address });
   const { balance } = useNftBalance(account?.address ?? "");
+  const isMdOrLarger = useMediaQuery({ query: "(min-width: 768px)" });
 
   useEffect(() => {
     if (balance !== undefined && balance !== 0n) {
@@ -125,86 +129,98 @@ export const Airdrop = () => {
   }, [account, controllerAddress, erc721Contract, transferAmount, send]);
 
   return (
-    <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto">
+    <div className="flex flex-col gap-4 w-[90%] max-w-2xl mx-auto z-20">
       <Card className="bg-gray-900">
-        <CardHeader>
-          <CardTitle className="text-xl font-bold text-white">
-            zKube Airdrop Claim
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="rounded-lg bg-gray-800 p-4 space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-300">Claimable Amount</span>
-              <span className="text-white font-bold">
-                {freeGames?.number ?? 0} Games
-              </span>
-            </div>
-
-            {!claimStatus.claimed || !claimStatus.showSuccess ? (
-              <Button
-                className="w-full"
-                onClick={handleClaim}
-                disabled={claimStatus.claimed}
-              >
-                <Wallet className="mr-2 h-4 w-4" />
-                {claimStatus.claimed ? "Claimed" : "Claim Airdrop"}
-              </Button>
-            ) : (
-              <div className="flex items-center gap-2 text-green-500">
-                <Check size={20} />
-                <span>
-                  Successfully claimed {claimStatus.amountClaimed} ZKUBE
+        <BackgroundGradient className="bg-slate-900">
+          <CardHeader>
+            <CardTitle
+              className={`${isMdOrLarger ? "text-4xl" : "text-2xl"} text-white mb-4`}
+            >
+              Airdrop Claim
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="rounded-lg bg-gray-800 p-4 space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300">Claimable Amount</span>
+                <span className="text-white font-bold">
+                  {freeGames?.number ?? 0} Games
                 </span>
               </div>
-            )}
-          </div>
-        </CardContent>
+              <br></br>
+
+              {!claimStatus.claimed || !claimStatus.showSuccess ? (
+                <BackgroundGradient className="bg-slate-900 p-2">
+                  <Button
+                    className={`w-full text-xl text-neon animate-neon `}
+                    onClick={handleClaim}
+                    variant={"secondary"}
+                    disabled={claimStatus.claimed}
+                  >
+                    <Wallet className="mr-4 h-6 w-6" />
+                    {claimStatus.claimed ? "Claimed" : "Claim Airdrop"}
+                  </Button>
+                </BackgroundGradient>
+              ) : (
+                <div className="flex items-center gap-2 text-green-500">
+                  <Check size={20} />
+                  <span>
+                    Successfully claimed {claimStatus.amountClaimed} ZKUBE
+                  </span>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </BackgroundGradient>
       </Card>
 
       <Card className="bg-gray-900">
-        <CardHeader>
-          <CardTitle className="text-xl font-bold text-white flex justify-between items-center">
-            <div>Transfer to Controller</div>
-            <HeaderNftBalance />
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {balance !== 0n && balance !== undefined && (
-            <div className="rounded-lg bg-gray-800 p-4 space-y-2">
-              <div className="flex items-center gap-2">
-                <Input
-                  placeholder="Enter controller address"
-                  value={controllerAddress}
-                  onChange={(e) => setControllerAddress(e.target.value)}
-                  className="bg-gray-800/50 border-gray-700 flex-grow"
-                />
-                <Input
-                  type="number"
-                  placeholder={`Amount`}
-                  value={transferAmount}
-                  onChange={(e) => setTransferAmount(e.target.value)}
-                  min="1"
-                  max={balance.toString()}
-                  className="bg-gray-800/50 border-gray-700 w-32"
-                />
+        <BackgroundGradient className="bg-slate-900">
+          <CardHeader>
+            <CardTitle
+              className={`${isMdOrLarger ? "text-4xl" : "text-xl"} text-white flex justify-between items-center`}
+            >
+              <div>Transfer to Controller</div>
+              <HeaderNftBalance />
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {balance !== 0n && balance !== undefined && (
+              <div className="rounded-lg bg-gray-800 p-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    placeholder="Enter controller address"
+                    value={controllerAddress}
+                    onChange={(e) => setControllerAddress(e.target.value)}
+                    className="bg-gray-800/50 border-gray-700 flex-grow"
+                  />
+                  <Input
+                    type="number"
+                    placeholder={`Amount`}
+                    value={transferAmount}
+                    onChange={(e) => setTransferAmount(e.target.value)}
+                    min="1"
+                    max={balance.toString()}
+                    className="bg-gray-800/50 border-gray-700 w-32"
+                  />
+                </div>
+                <Button
+                  className="w-full mt-2"
+                  onClick={handleTransfer}
+                  disabled={
+                    isPending ||
+                    !controllerAddress ||
+                    !transferAmount ||
+                    parseInt(transferAmount) <= 0
+                  }
+                  isLoading={isPending}
+                >
+                  Transfer to Controller
+                </Button>
               </div>
-              <Button
-                className="w-full mt-2"
-                onClick={handleTransfer}
-                disabled={
-                  isPending ||
-                  !controllerAddress ||
-                  !transferAmount ||
-                  parseInt(transferAmount) <= 0
-                }
-                isLoading={isPending}
-              >
-                Transfer to Controller
-              </Button>
-            </div>
-          )}
-        </CardContent>
+            )}
+          </CardContent>
+        </BackgroundGradient>
       </Card>
     </div>
   );
