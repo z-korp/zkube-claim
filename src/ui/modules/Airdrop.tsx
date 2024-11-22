@@ -26,7 +26,7 @@ export const Airdrop = () => {
       systemCalls: { claimFreeMint },
     },
   } = useDojo();
-  const { account } = useAccount();
+  const { account, status } = useAccount();
   const [claimStatus, setClaimStatus] = useState({
     claimed: false,
     amountClaimed: "0",
@@ -142,52 +142,57 @@ export const Airdrop = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="rounded-lg bg-gray-800 p-4 space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-300">Claimable Amount</span>
-                <span className="text-white font-bold">
-                  {freeGames?.number ?? 0} Games
-                </span>
-              </div>
-              <br></br>
-
-              {!claimStatus.claimed || !claimStatus.showSuccess ? (
-                <BackgroundGradient className="bg-slate-900 p-2">
-                  <Button
-                    className={`w-full text-xl text-neon animate-neon `}
-                    onClick={handleClaim}
-                    variant={"secondary"}
-                    disabled={claimStatus.claimed}
-                  >
-                    <Wallet className="mr-4 h-6 w-6" />
-                    {claimStatus.claimed ? "Claimed" : "Claim Airdrop"}
-                  </Button>
-                </BackgroundGradient>
-              ) : (
-                <div className="flex items-center gap-2 text-green-500">
-                  <Check size={20} />
-                  <span>
-                    Successfully claimed {claimStatus.amountClaimed} ZKUBE
+            {status === "connected" ? (
+              <div className="rounded-lg bg-gray-800 p-4 space-y-8">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-300">Claimable Amount</span>
+                  <span className="text-white font-bold">
+                    {freeGames?.number ?? 0} Games
                   </span>
                 </div>
-              )}
-            </div>
+
+                {!claimStatus.claimed || !claimStatus.showSuccess ? (
+                  <BackgroundGradient className="bg-slate-900 p-2">
+                    <Button
+                      className={`w-full text-xl text-neon animate-neon `}
+                      onClick={handleClaim}
+                      variant={"secondary"}
+                      disabled={claimStatus.claimed}
+                    >
+                      <Wallet className="mr-4 h-6 w-6" />
+                      {claimStatus.claimed ? "Claimed" : "Claim Airdrop"}
+                    </Button>
+                  </BackgroundGradient>
+                ) : (
+                  <div className="flex items-center gap-2 text-green-500">
+                    <Check size={20} />
+                    <span>
+                      Successfully claimed {claimStatus.amountClaimed} ZKUBE
+                    </span>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="rounded-lg bg-gray-800 p-4 space-y-2">
+                Please connect your wallet
+              </div>
+            )}
           </CardContent>
         </BackgroundGradient>
       </Card>
 
-      <Card className="bg-gray-900">
-        <BackgroundGradient className="bg-slate-900">
-          <CardHeader>
-            <CardTitle
-              className={`${isMdOrLarger ? "text-4xl" : "text-xl"} text-white flex justify-between items-center`}
-            >
-              <div>Transfer to Controller</div>
-              <HeaderNftBalance />
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {balance !== 0n && balance !== undefined && (
+      {balance !== 0n && balance !== undefined && (
+        <Card className="bg-gray-900">
+          <BackgroundGradient className="bg-slate-900">
+            <CardHeader>
+              <CardTitle
+                className={`${isMdOrLarger ? "text-4xl" : "text-xl"} text-white flex justify-between items-center`}
+              >
+                <div>Transfer to Controller</div>
+                <HeaderNftBalance />
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="rounded-lg bg-gray-800 p-4 space-y-2">
                 <div className="flex items-center gap-2">
                   <Input
@@ -220,10 +225,10 @@ export const Airdrop = () => {
                   Transfer to Controller
                 </Button>
               </div>
-            )}
-          </CardContent>
-        </BackgroundGradient>
-      </Card>
+            </CardContent>
+          </BackgroundGradient>
+        </Card>
+      )}
     </div>
   );
 };

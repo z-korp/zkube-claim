@@ -6,7 +6,6 @@ import { BackgroundGradient } from "./BackgroundGradient";
 
 const Connect = () => {
   const { address, status } = useAccount();
-
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClose = () => {
@@ -25,17 +24,19 @@ const Connect = () => {
 
   return (
     <div className="flex items-center gap-3">
-      <BackgroundGradient className="bg-slate-900">
-        <button
-          className="p-2"
-          onClick={() => {
-            setIsOpen(true);
-          }}
-        >
-          Connect
-        </button>
-        <ConnectDialog isOpen={isOpen} onClose={handleClose} />
-      </BackgroundGradient>
+      <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+        <BackgroundGradient className="bg-slate-900">
+          <button
+            className="p-2"
+            onClick={() => {
+              setIsOpen(true);
+            }}
+          >
+            Connect
+          </button>
+          <ConnectDialog isOpen={isOpen} onClose={handleClose} />
+        </BackgroundGradient>
+      </motion.div>
     </div>
   );
 };
