@@ -15,8 +15,8 @@ export function SoundPlayerProvider({
   const [over, setOver] = useState(false);
   const [start, setStart] = useState(false);
 
-  const { account } = useAccount();
-  const { player } = usePlayer({ playerId: account?.address });
+  const { address } = useAccount();
+  const { player } = usePlayer({ playerId: address });
   const { game } = useGame({ gameId: player?.game_id, shouldLog: false });
 
   useEffect(() => {

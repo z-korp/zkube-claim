@@ -17,7 +17,7 @@ export const useNftBalance = (address: string) => {
     functionName: "balance_of",
     args: [address],
     watch: true,
-    refetchInterval: 2000,
+    refetchInterval: 1000,
     blockIdentifier: BlockTag.PENDING,
   });
 

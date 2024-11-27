@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Check, Wallet } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../elements/card";
 import { Button } from "../elements/button";
@@ -13,12 +13,17 @@ import {
   useSendTransaction,
 } from "@starknet-react/core";
 import { erc721ABI } from "@/utils/erc721";
-import { showToast } from "@/utils/toast";
+import { toast } from "sonner";
+import { shortenHex } from "@dojoengine/utils";
 import HeaderNftBalance from "../components/HeaderNftBalance";
 import { BackgroundGradient } from "../components/BackgroundGradient";
 import { useMediaQuery } from "react-responsive";
+import { showToast } from "@/utils/toast";
 
-const { VITE_PUBLIC_GAME_CREDITS_TOKEN_ADDRESS } = import.meta.env;
+const { VITE_PUBLIC_GAME_CREDITS_TOKEN_ADDRESS, VITE_PUBLIC_DEPLOY_TYPE } =
+  import.meta.env;
+
+const TX_TRANSFER_ID = "transfer";
 
 export const Airdrop = () => {
   const {
@@ -26,7 +31,7 @@ export const Airdrop = () => {
       systemCalls: { claimFreeMint },
     },
   } = useDojo();
-  const { account, status } = useAccount();
+  const { account, status, address } = useAccount();
   const [claimStatus, setClaimStatus] = useState({
     claimed: false,
     amountClaimed: "0",
@@ -40,11 +45,90 @@ export const Airdrop = () => {
     address: VITE_PUBLIC_GAME_CREDITS_TOKEN_ADDRESS,
   });
 
-  const { send, isPending, isError, error } = useSendTransaction({});
-
-  const freeGames = useFreeMint({ player_id: account?.address });
-  const { balance } = useNftBalance(account?.address ?? "");
   const isMdOrLarger = useMediaQuery({ query: "(min-width: 768px)" });
+  const isSmallHeight = useMediaQuery({ query: "(max-height: 768px)" });
+
+  const getToastPlacement = () => {
+    if (!isMdOrLarger) {
+      return isSmallHeight ? "top-center" : "bottom-right";
+    }
+    return "bottom-right";
+  };
+
+  const getUrl = (transaction_hash: string) => {
+    if (
+      VITE_PUBLIC_DEPLOY_TYPE === "sepolia" ||
+      VITE_PUBLIC_DEPLOY_TYPE === "sepoliadev1" ||
+      VITE_PUBLIC_DEPLOY_TYPE === "sepoliadev2"
+    ) {
+      return `https://sepolia.starkscan.co/tx/${transaction_hash}`;
+    } else {
+      return `https://worlds.dev/networks/slot/worlds/zkube-${VITE_PUBLIC_DEPLOY_TYPE}/txs/${transaction_hash}`;
+    }
+  };
+
+  const getToastAction = (transaction_hash: string) => {
+    return {
+      label: "View",
+      onClick: () => window.open(getUrl(transaction_hash), "_blank"),
+    };
+  };
+
+  const { send, isPending } = useSendTransaction({
+    onSuccess: async (transaction) => {
+      const toastId = TX_TRANSFER_ID;
+
+      if (isMdOrLarger) {
+        toast.loading("Transaction in progress...", {
+          description: shortenHex(transaction.transaction_hash),
+          action: getToastAction(transaction.transaction_hash),
+          id: toastId,
+          position: getToastPlacement(),
+        });
+
+        try {
+          const tx = await account?.waitForTransaction(
+            transaction.transaction_hash,
+            {
+              retryInterval: 100,
+            },
+          );
+
+          if (tx?.isSuccess) {
+            toast.success("Transfer successful!", {
+              id: toastId,
+              description: shortenHex(transaction.transaction_hash),
+              action: getToastAction(transaction.transaction_hash),
+              position: getToastPlacement(),
+            });
+          } else {
+            toast.error("Error", {
+              id: toastId,
+              position: getToastPlacement(),
+            });
+          }
+        } catch (error) {
+          toast.error("Transaction failed", {
+            id: toastId,
+            position: getToastPlacement(),
+          });
+        }
+      }
+    },
+    onError: (error) => {
+      if (isMdOrLarger) {
+        toast.error(`Transfer failed: ${error.message}`, {
+          id: `error-${Date.now()}`,
+          position: getToastPlacement(),
+        });
+      }
+    },
+  });
+
+  const freeGames = useFreeMint({
+    player_id: address,
+  });
+  const { balance } = useNftBalance(address ?? "");
 
   useEffect(() => {
     if (balance !== undefined && balance !== 0n) {
@@ -54,11 +138,6 @@ export const Airdrop = () => {
 
   const handleClaim = useCallback(async () => {
     try {
-      showToast({
-        message: "Claiming airdrop...",
-        toastId: "airdrop-claim",
-      });
-
       await claimFreeMint({
         account: account as Account,
       });
@@ -71,19 +150,8 @@ export const Airdrop = () => {
         showSuccess: true,
         amountClaimed: freeGames?.number.toString() ?? "0",
       }));
-
-      showToast({
-        message: `Successfully claimed ${freeGames?.number ?? 0} ZKUBE`,
-        type: "success",
-        toastId: "airdrop-claim",
-      });
     } catch (error) {
       console.error("Error claiming:", error);
-      showToast({
-        message: "Failed to claim airdrop",
-        type: "error",
-        toastId: "airdrop-claim",
-      });
     }
   }, [account, claimFreeMint, freeGames?.number]);
 
@@ -92,8 +160,8 @@ export const Airdrop = () => {
 
     try {
       showToast({
-        message: "Preparing transfers...",
-        toastId: "transfer-process",
+        message: "Claiming airdrop...",
+        toastId: TX_TRANSFER_ID,
       });
 
       const tokenIds = await Promise.all(
@@ -114,22 +182,26 @@ export const Airdrop = () => {
         ]),
       );
 
-      send(calls);
-
-      showToast({
-        message: `Transferring ${transferAmount} NFTs to controller`,
-        toastId: "transfer-process",
-      });
+      await send(calls);
     } catch (error) {
       console.error("Transfer error:", error);
-      showToast({
-        message: "Failed to prepare transfers",
-        type: "error",
-        toastId: "transfer-process",
-      });
+      if (isMdOrLarger) {
+        toast.error("Failed to prepare transfers", {
+          id: `error-${Date.now()}`,
+          position: getToastPlacement(),
+        });
+      }
     }
-  }, [account, controllerAddress, erc721Contract, transferAmount, send]);
+  }, [
+    account,
+    controllerAddress,
+    erc721Contract,
+    transferAmount,
+    send,
+    isMdOrLarger,
+  ]);
 
+  // Rest of the component remains the same...
   return (
     <div className="flex flex-col gap-4 w-[90%] max-w-2xl mx-auto z-20">
       <Card className="bg-gray-900">

@@ -19,7 +19,7 @@ export const SponsorChest = ({ chest_id }: { chest_id: number }) => {
   const [lordsAmount, setLordsAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false); // Changed to false
-  const { account } = useAccount();
+  const { account, address } = useAccount();
   const {
     setup: {
       systemCalls: { sponsorChest },
@@ -35,7 +35,7 @@ export const SponsorChest = ({ chest_id }: { chest_id: number }) => {
     }
   }, [lordsAmount]);
 
-  const { player } = usePlayer({ playerId: account?.address });
+  const { player } = usePlayer({ playerId: address });
 
   const handleClick = useCallback(async () => {
     if (amountInWei <= 0n) return;

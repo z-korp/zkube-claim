@@ -3,12 +3,45 @@ import { convertToCSV } from "@/utils/csv";
 import { saveAs } from "file-saver"; // Install with `npm install file-saver`
 import { Button } from "../elements/button";
 import { formatPrize } from "@/utils/wei";
+import { getSyncEntities } from "@dojoengine/state";
+import { useEffect } from "react";
+import { useDojo } from "@/dojo/useDojo";
+import * as torii from "@dojoengine/torii-client";
 
 export const StatsPage = () => {
   const {
+    setup: { toriiClient, contractComponents },
+  } = useDojo();
+
+  useEffect(() => {
+    const clause: torii.KeysClause = {
+      keys: [undefined],
+      pattern_matching: "FixedLen",
+      models: [
+        "zkube-Player",
+        "zkube-Game",
+        "zkube-Participation",
+        "zkube-Tournament",
+      ],
+    };
+
+    const syncEntities = async () => {
+      await getSyncEntities(
+        toriiClient,
+        contractComponents as any,
+        { Keys: clause },
+        [],
+        30_000,
+        false,
+      );
+    };
+
+    syncEntities();
+  }, []);
+
+  const {
     topPlayers,
     totalScore,
-    maxCombo,
     topGames,
     finishedGames,
     ongoingGames,
@@ -164,7 +197,7 @@ export const StatsPage = () => {
   };
 
   return (
-    <main className="container mx-auto px-4 py-8">
+    <main className="container mx-auto px-4 py-8 mt-20">
       <h1 className="text-4xl font-bold mb-10">Game Statistics</h1>
 
       {/* Grid pour les stats globales */}

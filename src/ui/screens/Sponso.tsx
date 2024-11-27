@@ -13,6 +13,9 @@ import { Trophy } from "lucide-react";
 import { Tournament } from "@/dojo/game/models/tournament";
 import { SponsorTournament } from "../actions/SponsorTournament";
 import TournamentTimer from "../components/TournamentTimer";
+import { getSyncEntities } from "@dojoengine/state";
+import { useDojo } from "@/dojo/useDojo";
+import * as torii from "@dojoengine/torii-client";
 
 const { VITE_PUBLIC_GAME_TOKEN_SYMBOL } = import.meta.env;
 
@@ -63,6 +66,31 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
 };
 
 export const SponsoPage = () => {
+  const {
+    setup: { toriiClient, contractComponents },
+  } = useDojo();
+
+  useEffect(() => {
+    const clause: torii.KeysClause = {
+      keys: [undefined],
+      pattern_matching: "FixedLen",
+      models: ["zkube-Participation", "zkube-Tournament"],
+    };
+
+    const syncEntities = async () => {
+      await getSyncEntities(
+        toriiClient,
+        contractComponents as any,
+        { Keys: clause },
+        [],
+        30_000,
+        false,
+      );
+    };
+
+    syncEntities();
+  }, []);
+
   const chests = useAllChests();
 
   const {
@@ -123,7 +151,7 @@ export const SponsoPage = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto overflow-y-auto h-full items-center">
+    <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto overflow-y-auto h-full items-center mt-20">
       <Card className="bg-gray-900">
         <CardHeader>
           <CardTitle className="text-xl font-bold text-white text-center">

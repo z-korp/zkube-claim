@@ -26,7 +26,7 @@ export const SponsorTournament = ({
   const [lordsAmount, setLordsAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false); // Changed to false
-  const { account } = useAccount();
+  const { account, address } = useAccount();
   const {
     setup: {
       systemCalls: { sponsorTournament },
@@ -42,7 +42,7 @@ export const SponsorTournament = ({
     }
   }, [lordsAmount]);
 
-  const { player } = usePlayer({ playerId: account?.address });
+  const { player } = usePlayer({ playerId: address });
 
   const handleClick = useCallback(async () => {
     if (amountInWei <= 0n) return;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "../elements/input";
 import { Button } from "@/ui/elements/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../elements/card";
@@ -11,13 +11,44 @@ import { shortenAddress } from "@/utils/address";
 import { useDojo } from "@/dojo/useDojo";
 import { useAccount } from "@starknet-react/core";
 import { Account } from "starknet";
+import { getSyncEntities } from "@dojoengine/state";
+import * as torii from "@dojoengine/torii-client";
 
 export const AdminPage = () => {
   const {
     setup: {
+      toriiClient,
+      contractComponents,
       systemCalls: { updateZkorpAddress, updateErc721Address },
     },
   } = useDojo();
+
+  useEffect(() => {
+    const clause: torii.KeysClause = {
+      keys: [undefined],
+      pattern_matching: "FixedLen",
+      models: [
+        "zkube-Player",
+        "zkube-Game",
+        "zkube-Tournament",
+        "zkube-Settings",
+        "zkube-Admin",
+      ],
+    };
+
+    const syncEntities = async () => {
+      await getSyncEntities(
+        toriiClient,
+        contractComponents as any,
+        { Keys: clause },
+        [],
+        30_000,
+        false,
+      );
+    };
+
+    syncEntities();
+  }, []);
 
   const { account } = useAccount();
   const [zkorpAddress, setZkorpAddress] = useState("");
@@ -73,7 +104,7 @@ export const AdminPage = () => {
   };
 
   return (
-    <div className="container flex flex-col gap-4 w-full max-w-6xl mx-auto overflow-y-auto h-full">
+    <div className="container flex flex-col gap-4 w-full max-w-6xl mx-auto overflow-y-auto h-[calc(100%-5rem)] mt-20">
       <Card className="bg-gray-900">
         <CardHeader>
           <CardTitle className="text-xl font-bold text-white text-center">

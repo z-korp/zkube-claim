@@ -7,7 +7,7 @@ import { BlockTag } from "starknet";
 import LordsToken from "/assets/lords-token.png";
 
 interface BalanceProps {
-  address: string;
+  address: `0x${string}`;
   token_address: `0x${string}`;
   symbol?: string;
 }
@@ -30,7 +30,7 @@ const Balance = ({ address, token_address, symbol = "ETH" }: BalanceProps) => {
   ); // don't change this to 0, it will cause a flicker
 
   // useBalance doesn't work on Katana, don't know why
-  const { data, isError, isLoading, error } = useReadContract({
+  const { data, isError, error } = useReadContract({
     functionName: "balanceOf",
     args: [address as string],
     abi: erc20ABI,

@@ -30,10 +30,16 @@ export async function setup({ ...config }: Config) {
 
   // fetch all existing entities from torii
   // await getSyncEntities(toriiClient, contractModels as any, []);
+  const mintClause: torii.KeysClause = {
+    keys: [undefined],
+    pattern_matching: "FixedLen",
+    models: ["zkube-Mint", "zkube-Chest"],
+  };
+
   const sync = await getSyncEntities(
     toriiClient,
     contractComponents as any,
-    undefined,
+    { Keys: mintClause },
     [],
     30_000,
     false,

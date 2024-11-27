@@ -1,8 +1,8 @@
 import { useDojo } from "@/dojo/useDojo";
 import { useMemo } from "react";
 import { getEntityIdFromKeys } from "@dojoengine/utils";
-import { useComponentValue, useEntityQuery } from "@dojoengine/react";
-import { Entity, Has } from "@dojoengine/recs";
+import { useComponentValue } from "@dojoengine/react";
+import { Entity } from "@dojoengine/recs";
 
 export const useFreeMint = ({
   player_id,
@@ -23,10 +23,7 @@ export const useFreeMint = ({
     [player_id],
   );
 
-  console.log("key", key);
-
   const component = useComponentValue(Mint, key);
-  console.log("component", component);
   const mint = useMemo(() => {
     return component ? new MintClass(component) : null;
   }, [MintClass, component]);

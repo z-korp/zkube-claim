@@ -47,16 +47,16 @@ export const useRewardsStore = create<RewardsState>((set) => ({
 
 // Custom hook to manage rewards calculations
 export const useRewardsCalculator = () => {
-  const { account } = useAccount();
+  const { address } = useAccount();
   const chests = useAllChests();
-  const participations = useParticipations({ player_id: account?.address });
-  const tournaments = useWonTournaments({ player_id: account?.address });
+  const participations = useParticipations({ player_id: address });
+  const tournaments = useWonTournaments({ player_id: address });
   const { setRewardsCount, setTournamentRewards, setFilteredParticipations } =
     useRewardsStore();
 
   useEffect(() => {
     const calculateRewards = () => {
-      if (!account?.address) return;
+      if (!address) return;
 
       // Calculate filteredParticipations
       const calculatedFilteredParticipations = participations
@@ -98,7 +98,7 @@ export const useRewardsCalculator = () => {
 
       // Calculate tournamentRewards
       const calculatedTournamentRewards: TournamentReward[] = [];
-      const player_id = BigInt(account.address).toString(16);
+      const player_id = BigInt(address).toString(16);
 
       tournaments.forEach((tournament) => {
         if (!tournament.isOver()) return;
@@ -109,7 +109,7 @@ export const useRewardsCalculator = () => {
           tournament.top1_prize !== 0n
         ) {
           calculatedTournamentRewards.push({
-            player_id: account.address,
+            player_id: address,
             rank: 1,
             prize: formatPrize(
               tournament.top1_prize,
@@ -126,7 +126,7 @@ export const useRewardsCalculator = () => {
           tournament.top2_prize !== 0n
         ) {
           calculatedTournamentRewards.push({
-            player_id: account.address,
+            player_id: address,
             rank: 2,
             prize: formatPrize(
               tournament.top2_prize,
@@ -143,7 +143,7 @@ export const useRewardsCalculator = () => {
           tournament.top3_prize !== 0n
         ) {
           calculatedTournamentRewards.push({
-            player_id: account.address,
+            player_id: address,
             rank: 3,
             prize: formatPrize(
               tournament.top3_prize,
@@ -167,7 +167,7 @@ export const useRewardsCalculator = () => {
 
     calculateRewards();
   }, [
-    account?.address,
+    address,
     chests,
     participations,
     tournaments,
