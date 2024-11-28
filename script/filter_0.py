@@ -3,7 +3,7 @@ from pathlib import Path
 
 def remove_addresses(input_folder):
     """
-    Remove addresses starting with '0x0' and '0x1' from all CSVs in the folder
+    Remove addresses that are exactly '0x0' and '0x1' from all CSVs in the folder
     """
     folder = Path(input_folder)
     csv_files = list(folder.glob('*.csv'))
@@ -20,8 +20,8 @@ def remove_addresses(input_folder):
             # Count original rows
             original_count = len(df)
             
-            # Remove addresses starting with '0x0' or '0x1'
-            df = df[~df['address'].str.startswith(('0x0', '0x1'))]
+            # Remove exact matches for '0x0' or '0x1'
+            df = df[~df['address'].isin(['0x0', '0x1'])]
             
             # Count removed rows
             removed_count = original_count - len(df)
