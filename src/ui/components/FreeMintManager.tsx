@@ -110,24 +110,48 @@ export const FreeMintManager = () => {
     }
 
     setIsLoading(true);
-    const BATCH_SIZE = 100; // Batch size
+    const BATCH_SIZE = 500; // Batch size
     const failedAddresses = []; // Store failed addresses
     const successAddresses = []; // Store successful addresses
 
+    console.log("Processing addresses from CSV:", csvContent.length);
     try {
       // Prepare all addresses
-      const allAddresses = csvContent.map((row) => {
+      const allAddresses = csvContent.map((row, index) => {
+        console.log("Processing row:", index, row);
         const addressIndex = headers.indexOf("address");
-        const timestampIndex = headers.indexOf("tenDaysFromNow");
-        const numberIndex = headers.indexOf("number");
+        const timestampIndex = headers.indexOf("expiration_timestamp");
+        const quantityIndex = headers.indexOf("quantity");
 
-        const amount =
-          numberIndex !== -1 ? Math.min(parseInt(row[numberIndex]), 5) : 5;
+        if (
+          addressIndex === -1 ||
+          timestampIndex === -1 ||
+          quantityIndex === -1
+        ) {
+          console.error("Missing required columns in CSV:", {
+            hasAddress: addressIndex !== -1,
+            hasTimestamp: timestampIndex !== -1,
+            hasQuantity: quantityIndex !== -1,
+          });
+          throw new Error("CSV missing required columns");
+        }
+
+        const quantity = parseInt(row[quantityIndex]);
+        const timestamp = parseInt(row[timestampIndex]);
+
+        if (isNaN(quantity) || isNaN(timestamp)) {
+          console.error("Invalid data in row:", index, {
+            address: row[addressIndex],
+            quantity: row[quantityIndex],
+            timestamp: row[timestampIndex],
+          });
+          throw new Error("Invalid quantity or timestamp");
+        }
 
         return {
           address: row[addressIndex],
-          timestamp: parseInt(row[timestampIndex]),
-          amount: amount,
+          timestamp: timestamp,
+          amount: quantity,
         };
       });
 
@@ -154,7 +178,6 @@ export const FreeMintManager = () => {
           successAddresses.push(
             ...batch.map((address) => ({
               ...address,
-              timestamp: new Date().getTime(),
             })),
           );
 
@@ -165,7 +188,6 @@ export const FreeMintManager = () => {
           failedAddresses.push(
             ...batch.map((address) => ({
               ...address,
-              timestamp: new Date().getTime(),
             })),
           );
         }
