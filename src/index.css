@@ -15,7 +15,6 @@
 
   :root {
     font-family: "Fredericka the Great", sans;
-    user-select: none;
     --background: 0 0% 100%;
     --foreground: 222.2 47.4% 11.2%;
 

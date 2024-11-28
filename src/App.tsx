@@ -11,10 +11,9 @@ import { HomePage } from "./ui/screens/Home";
 import { AdminPage } from "./ui/screens/Admin";
 import { SponsoPage } from "./ui/screens/Sponso";
 import { StatsPage } from "./ui/screens/Stats";
-import { useMediaQuery } from "react-responsive";
+import { MintCheckPage } from "./ui/screens/MintCheck";
 
 const Layout: React.FC = () => {
-  const isMdOrLarger = useMediaQuery({ query: "(min-width: 768px)" });
   return (
     <div className="h-screen flex flex-col w-full">
       <Header />
@@ -35,6 +34,7 @@ const App: React.FC = () => {
             <Route path="/stats" element={<StatsPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/sponso" element={<SponsoPage />} />
+            <Route path="/mint-check" element={<MintCheckPage />} />
           </Route>
         </Routes>
         <Toaster position="bottom-right" />
