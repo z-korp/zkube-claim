@@ -33,7 +33,7 @@ export async function setup({ ...config }: Config) {
   const mintClause: torii.KeysClause = {
     keys: [undefined],
     pattern_matching: "FixedLen",
-    models: ["zkube-Mint", "zkube-Chest"],
+    models: ["zkube-Chest"],
   };
 
   const sync = await getSyncEntities(

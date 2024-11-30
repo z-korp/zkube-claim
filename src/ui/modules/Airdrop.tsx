@@ -19,6 +19,8 @@ import HeaderNftBalance from "../components/HeaderNftBalance";
 import { BackgroundGradient } from "../components/BackgroundGradient";
 import { useMediaQuery } from "react-responsive";
 import { showToast } from "@/utils/toast";
+import { getSyncEntities } from "@dojoengine/state";
+import * as torii from "@dojoengine/torii-client";
 
 const { VITE_PUBLIC_GAME_CREDITS_TOKEN_ADDRESS, VITE_PUBLIC_DEPLOY_TYPE } =
   import.meta.env;
@@ -29,6 +31,8 @@ export const Airdrop = () => {
   const {
     setup: {
       systemCalls: { claimFreeMint },
+      toriiClient,
+      contractComponents,
     },
   } = useDojo();
   const { account, status, address } = useAccount();
@@ -44,6 +48,32 @@ export const Airdrop = () => {
     abi: erc721ABI,
     address: VITE_PUBLIC_GAME_CREDITS_TOKEN_ADDRESS,
   });
+
+  useEffect(() => {
+    const clause: torii.MemberClause = {
+      model: "zkube-Mint",
+      member: "id",
+      operator: "Eq",
+      value: {
+        Primitive: {
+          Felt252: address,
+        },
+      },
+    };
+
+    const syncEntities = async () => {
+      await getSyncEntities(
+        toriiClient,
+        contractComponents as any,
+        { Member: clause },
+        [],
+        100,
+        false,
+      );
+    };
+
+    syncEntities();
+  }, [address]);
 
   const isMdOrLarger = useMediaQuery({ query: "(min-width: 768px)" });
   const isSmallHeight = useMediaQuery({ query: "(max-height: 768px)" });

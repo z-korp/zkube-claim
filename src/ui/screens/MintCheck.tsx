@@ -4,32 +4,45 @@ import { useDojo } from "@/dojo/useDojo";
 import { getSyncEntities } from "@dojoengine/state";
 import * as torii from "@dojoengine/torii-client";
 import { useFreeMints } from "@/hooks/useFreeMints";
+import { useAccount } from "@starknet-react/core";
 
 export const MintCheckPage = () => {
   const {
     setup: { toriiClient, contractComponents },
   } = useDojo();
+  const { address } = useAccount();
 
   useEffect(() => {
-    const clause: torii.KeysClause = {
+    /*const clause: torii.KeysClause = {
       keys: [undefined],
       pattern_matching: "FixedLen",
       models: ["zkube-Mint"],
+    };*/
+
+    const clause: torii.MemberClause = {
+      model: "zkube-Mint",
+      member: "id",
+      operator: "Eq",
+      value: {
+        Primitive: {
+          Felt252: address,
+        },
+      },
     };
 
     const syncEntities = async () => {
       await getSyncEntities(
         toriiClient,
         contractComponents as any,
-        { Keys: clause },
+        { Member: clause },
         [],
-        30_000,
+        100,
         false,
       );
     };
 
     syncEntities();
-  }, []);
+  }, [address]);
 
   const mints = useFreeMints();
 
